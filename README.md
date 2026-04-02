@@ -19,3 +19,4 @@ View your app in AI Studio: https://ai.studio/apps/fb2b8c9e-8d35-4b68-b458-4b00e
 3. Run the app:
    `npm run dev`
 # Arabic-ai-project
+# Arabic-ai-project
