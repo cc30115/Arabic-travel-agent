@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Empty Quarter Escape | Khaymah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root { --sand: #E8DCC4; --dark: #0A0A0A; --gold: #C5A059; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: var(--sand); overflow-x: hidden; cursor: none; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.03; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
+        .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 10000; pointer-events: none; }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--gold); }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(197, 160, 89, 0.5); transition: width 0.2s, height 0.2s, background-color 0.2s; }
+        .grid-lines { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: space-between; pointer-events: none; z-index: -1; padding: 0 5vw; }
+        .grid-line { width: 1px; height: 100%; background-color: rgba(232, 220, 196, 0.05); }
+        .text-gold { color: var(--gold); } .bg-gold { background-color: var(--gold); } .border-gold { border-color: var(--gold); }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#C5A059] selection:text-white opacity-0" id="page-body">
+
+    <div class="noise"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <div class="grid-lines">
+        <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference">
+        <a href="index.html" class="text-2xl serif tracking-widest uppercase hover-target">Khaymah <span class="text-sm text-gold ml-2">خيمة</span></a>
+        <div class="hidden md:flex gap-8 text-sm tracking-widest uppercase">
+            <a href="index.html" class="hover:text-gold transition-colors hover-target">Home</a>
+            <a href="about.html" class="hover:text-gold transition-colors hover-target">About Us</a>
+            <a href="contact.html" class="hover:text-gold transition-colors hover-target">Contact Us</a>
+            <!-- Language Selector -->
+            <div class="relative group ml-4 pl-4 border-l border-white/20">
+                <button class="flex items-center gap-2 hover:text-gold transition-colors hover-target uppercase">
+                    <iconify-icon icon="lucide:globe" width="18"></iconify-icon>
+                    EN
+                </button>
+                <div class="absolute right-0 top-full pt-6 w-32 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto translate-y-2 group-hover:translate-y-0">
+                    <div class="bg-[#0A0A0A] border border-white/10 rounded-lg overflow-hidden">
+                        <a href="#" class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors items-center justify-between">English <span class="text-gold"><iconify-icon icon="lucide:check" width="14"></iconify-icon></span></a>
+                        <a href="journey-1-zh.html" class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors">中文</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <button id="menu-btn" class="md:hidden text-2xl hover-target relative z-50"><iconify-icon icon="lucide:menu"></iconify-icon></button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-500">
+        <a href="index.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Home</a>
+        <a href="about.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">About Us</a>
+        <a href="contact.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Contact Us</a>
+    </div>
+
+    <!-- Journey Hero -->
+    <section class="pt-40 pb-20 min-h-screen flex flex-col justify-center">
+        <div class="px-6 md:px-20 max-w-7xl mx-auto w-full"><div class="mb-8 reveal-text">
+            <span class="text-gold tracking-widest uppercase text-xs border border-gold/30 px-4 py-2 rounded-full">7 Days / 6 Nights</span>
+        </div>
+        <h1 class="text-5xl md:text-8xl serif mb-16 reveal-text leading-tight">The Empty Quarter <br><span class="text-gold italic text-4xl md:text-6xl">Escape</span></h1></div>
+        
+        <div class="relative w-full h-[500px] md:h-[75vh] overflow-hidden reveal-img mb-20"><img src="https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg" class="w-full h-full object-cover object-bottom"  alt="The Empty Quarter" referrerPolicy="no-referrer"  id="journey-img"></div>
+
+        <div class="px-6 md:px-20 max-w-7xl mx-auto w-full"><div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
+            <div class="md:col-span-8 space-y-12 text-white/70 leading-relaxed text-sm md:text-base reveal-text">
+                <div>
+                    <h2 class="text-3xl serif text-white mb-6">Overview</h2>
+                    <p>Venture into the Rub' al Khali, the largest continuous sand desert in the world. This 7-day expedition is designed for those who seek profound silence and the raw beauty of untouched nature. Experience the shifting sands, sleep under a canopy of unpolluted stars, and discover the ancient survival secrets of the Bedouin.</p>
+                </div>
+                <div>
+                    <h2 class="text-3xl serif text-white mb-6">Highlights</h2>
+                    <ul class="list-disc pl-5 space-y-3">
+                        <li>Private 4x4 dune bashing and navigation masterclass.</li>
+                        <li>Exclusive stargazing sessions with an expert astronomer.</li>
+                        <li>Traditional falconry display at dawn.</li>
+                        <li>Luxury mobile tented camp that moves with your journey.</li>
+                        <li>Authentic Bedouin feast prepared over an open fire.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="text-3xl serif text-white mb-6">Who is this for?</h2>
+                    <p>Perfect for thrill-seekers, passionate photographers, and anyone looking for an absolute digital detox. If you want to disconnect from the modern world and reconnect with nature in its most majestic form, this is your journey.</p>
+                </div>
+            </div>
+            
+            <div class="md:col-span-4 reveal-text">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm sticky top-32">
+                    <h3 class="text-2xl serif text-white mb-6">Journey Details</h3>
+                    <div class="space-y-4 mb-8 text-sm">
+                        <div class="flex justify-between border-b border-white/10 pb-4">
+                            <span class="text-white/50">Destination</span>
+                            <span class="text-right">Rub' al Khali, UAE</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-4">
+                            <span class="text-white/50">Duration</span>
+                            <span class="text-right">7 Days</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-4">
+                            <span class="text-white/50">Price per person</span>
+                            <span class="text-gold text-right">$12,500</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Internal Financial Estimation -->
+                    <div class="bg-black/40 p-4 rounded-xl mb-8 border border-white/5">
+                        <div class="text-xs text-white/40 uppercase tracking-widest mb-3">Internal Estimation</div>
+                        <div class="flex justify-between mb-2 text-sm">
+                            <span class="text-white/50">Est. Cost (成本)</span>
+                            <span class="text-white">$8,000</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-white/50">Est. Profit</span>
+                            <span class="text-[#4ade80]">$4,500 (36%)</span>
+                        </div>
+                    </div>
+
+                    <a href="contact.html" class="group relative inline-flex items-center justify-center w-full py-4 border border-gold/50 bg-black/20 backdrop-blur-md hover:bg-gold hover:text-black transition-all duration-500 hover-target overflow-hidden rounded-full">
+                        <div class="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out rounded-full"></div>
+                        <span class="relative z-10 uppercase tracking-widest text-xs flex items-center gap-2">
+                            Reserve Journey
+                            <iconify-icon icon="lucide:arrow-right" class="group-hover:translate-x-2 transition-transform"></iconify-icon>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Map -->
+        <div class="mt-32 reveal-text">
+            <h2 class="text-3xl serif text-white mb-8">Journey Map</h2>
+            <div id="map" class="w-full h-[400px] md:h-[500px] rounded-2xl z-10 relative border border-white/10 grayscale-[80%] hover:grayscale-0 transition-all duration-700"></div>
+        </div>
+
+        <!-- Itinerary Timeline -->
+        <div class="mt-32 space-y-12 mb-20">
+            <h2 class="text-3xl serif text-white mb-12">Day by Day Itinerary</h2>
+            
+            <!-- Day 1 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 01</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Arrival in Dubai</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> Dubai Desert Conservation Reserve<br>
+                    <strong>Hotel:</strong> Al Maha, a Luxury Collection Desert Resort & Spa<br>
+                    <strong>Transportation:</strong> Private S-Class Chauffeur (45 mins from DXB)</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">14:00 - 15:00:</span> VIP Airport Meet & Greet, fast-track immigration.</li>
+                        <li><span class="text-gold">15:00 - 16:00:</span> Private transfer to the desert resort.</li>
+                        <li><span class="text-gold">16:00 - 18:00:</span> Resort check-in and acclimatization in your private pool suite.</li>
+                        <li><span class="text-gold">18:00 - 19:30:</span> Late afternoon wildlife drive to spot Arabian Oryx.</li>
+                        <li><span class="text-gold">19:30 - 21:00:</span> Welcome dinner featuring traditional Emirati cuisine under the stars.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1582672060624-cb87e076644f?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 02</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Journey to Liwa</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> Liwa Oasis<br>
+                    <strong>Hotel:</strong> Qasr Al Sarab Desert Resort by Anantara<br>
+                    <strong>Transportation:</strong> Luxury 4x4 SUV (3.5 hours)</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">08:00 - 09:30:</span> Gourmet breakfast overlooking the dunes.</li>
+                        <li><span class="text-gold">09:30 - 13:00:</span> Depart Dubai, heading south towards the legendary Liwa Oasis.</li>
+                        <li><span class="text-gold">13:00 - 14:30:</span> Stop at ancient forts and enjoy a private oasis picnic lunch.</li>
+                        <li><span class="text-gold">14:30 - 16:00:</span> Arrive and check into Qasr Al Sarab, an architectural marvel.</li>
+                        <li><span class="text-gold">16:00 - 18:30:</span> Sunset camel trek along the towering red dunes.</li>
+                        <li><span class="text-gold">19:00 - 21:00:</span> Fine dining experience at the resort's signature restaurant.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1542401886-65d6c61db217?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 03</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Deep Desert Immersion</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> The Empty Quarter (Rub' al Khali)<br>
+                    <strong>Hotel:</strong> Exclusive Mobile Khaymah Royal Tent<br>
+                    <strong>Transportation:</strong> Specialized Desert 4x4 (2 hours)</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">07:00 - 08:30:</span> Dawn falconry display followed by a traditional Arabic breakfast.</li>
+                        <li><span class="text-gold">09:00 - 11:00:</span> Off-road expedition deeper into the Empty Quarter.</li>
+                        <li><span class="text-gold">11:00 - 13:00:</span> Arrive at the private Khaymah Royal Tent camp setup.</li>
+                        <li><span class="text-gold">13:00 - 15:00:</span> Leisure time and a light Bedouin-style lunch.</li>
+                        <li><span class="text-gold">15:00 - 18:00:</span> Extreme dune bashing and sandboarding with expert guides.</li>
+                        <li><span class="text-gold">18:30 - 21:00:</span> Campfire dinner and guided stargazing with a resident astronomer.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1545893835-abaa50cbe628?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 04</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Bedouin Heritage</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> The Empty Quarter (Rub' al Khali)<br>
+                    <strong>Hotel:</strong> Exclusive Mobile Khaymah Royal Tent<br>
+                    <strong>Transportation:</strong> Camel Trekking & Walking</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">07:00 - 09:00:</span> Sunrise meditation and breakfast in the dunes.</li>
+                        <li><span class="text-gold">09:00 - 12:00:</span> Guided desert walk learning ancient Bedouin tracking and survival skills.</li>
+                        <li><span class="text-gold">12:00 - 14:00:</span> Return to camp for rest and a traditional lunch.</li>
+                        <li><span class="text-gold">14:00 - 17:00:</span> Cultural workshop: Arabic coffee roasting and henna art.</li>
+                        <li><span class="text-gold">17:00 - 19:00:</span> Sunset photography session on the highest dunes.</li>
+                        <li><span class="text-gold">19:00 - 21:00:</span> Feast prepared over an open fire, accompanied by traditional Oud music.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1502049534556-94e823f95e31?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1489493173507-6feea31f12ff?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 05</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Return to Civilization</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> Abu Dhabi<br>
+                    <strong>Hotel:</strong> Emirates Palace Mandarin Oriental<br>
+                    <strong>Transportation:</strong> 4x4 to Highway, then Luxury Sedan (3.5 hours)</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">07:30 - 09:00:</span> Final desert breakfast and camp departure.</li>
+                        <li><span class="text-gold">09:00 - 12:30:</span> Emerge from the desert and travel to the capital city, Abu Dhabi.</li>
+                        <li><span class="text-gold">12:30 - 14:30:</span> Check into the opulent Emirates Palace and enjoy a light lunch.</li>
+                        <li><span class="text-gold">14:30 - 17:00:</span> Relax at the private beach or indulge in a signature spa treatment.</li>
+                        <li><span class="text-gold">17:00 - 19:00:</span> Private yacht cruise along the Abu Dhabi Corniche at sunset.</li>
+                        <li><span class="text-gold">19:00 - 21:00:</span> Dinner at a Michelin-starred restaurant within the palace.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1551043047-1d2adf00f3fd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1580674684081-776742d40003?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 06</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Abu Dhabi Culture</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> Abu Dhabi Cultural District<br>
+                    <strong>Hotel:</strong> Emirates Palace Mandarin Oriental<br>
+                    <strong>Transportation:</strong> Private Chauffeur</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">08:00 - 09:30:</span> Breakfast at the hotel.</li>
+                        <li><span class="text-gold">09:30 - 12:00:</span> VIP guided tour of the breathtaking Sheikh Zayed Grand Mosque.</li>
+                        <li><span class="text-gold">12:00 - 14:00:</span> Lunch at a premium waterfront restaurant on Saadiyat Island.</li>
+                        <li><span class="text-gold">14:00 - 17:00:</span> Private art tour at the Louvre Abu Dhabi.</li>
+                        <li><span class="text-gold">17:00 - 19:00:</span> Return to hotel to refresh and relax.</li>
+                        <li><span class="text-gold">19:00 - 21:00:</span> Farewell dinner overlooking the Arabian Gulf.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1563804860475-438e12450091?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Louvre 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1582650816912-30232231261a?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Louvre 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1546412414-e1885259563a?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Mosque 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+
+            <!-- Day 7 -->
+            <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                <div class="md:w-1/4">
+                    <div class="text-gold text-2xl serif">Day 07</div>
+                    <div class="text-white/50 text-sm uppercase tracking-widest mt-1">Departure</div>
+                </div>
+                <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                    <p><strong>Destination:</strong> Airport (AUH or DXB)<br>
+                    <strong>Hotel:</strong> N/A<br>
+                    <strong>Transportation:</strong> Private Chauffeur (30-90 mins)</p>
+                    <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                        <li><span class="text-gold">07:00 - 09:00:</span> Final leisurely breakfast at the Emirates Palace.</li>
+                        <li><span class="text-gold">09:00 - 11:00:</span> Last-minute souvenir shopping or relaxation.</li>
+                        <li><span class="text-gold">11:00 - 12:00:</span> Check-out and private transfer to the airport.</li>
+                        <li><span class="text-gold">12:00 - 14:00:</span> VIP lounge access before your onward journey.</li>
+                    </ul>
+                </div>
+                <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 1" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1556388158-158ea5ccacbd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 2" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1569154941061-e231b4732ef1?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 3" referrerPolicy="no-referrer">
+                </div>
+            </div>
+        </div>
+    </div></section>
+
+    <!-- Footer -->
+    <footer class="pt-24 pb-12 px-6 md:px-20 border-t border-white/10 bg-black">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 mb-20">
+            <div class="max-w-sm">
+                <a href="index.html" class="text-4xl serif tracking-widest uppercase block mb-6 hover-target">Khaymah <span class="text-2xl text-gold ml-2">خيمة</span></a>
+                <p class="text-white/60 text-sm leading-relaxed mb-8">
+                    Rooted in tradition, elevated for the modern explorer. Experience the majestic Arabian landscapes with unparalleled luxury.
+                </p>
+                <a href="mailto:concierge@khaymah.com" class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center justify-center gap-3 w-fit hover-target border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
+                    <iconify-icon icon="lucide:mail"></iconify-icon> concierge@khaymah.com
+                </a>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-12 md:gap-24 mt-4 md:mt-0">
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">Navigation</h4>
+                    <a href="index.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Home</a>
+                    <a href="about.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">About Us</a>
+                    <a href="#journeys" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Our Journeys</a>
+                    <a href="contact.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Contact Us</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">Socials</h4>
+                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:instagram"></iconify-icon> Instagram</a>
+                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:twitter"></iconify-icon> Twitter</a>
+                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:youtube"></iconify-icon> YouTube</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40 tracking-widest uppercase">
+            <div>&copy; 2026 Khaymah Luxury Travel. All rights reserved.</div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition-colors hover-target">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors hover-target">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.to('#page-body', { opacity: 1, duration: 1.5, ease: "power2.out" });
+
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if(menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if(menuOpen) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:x"></iconify-icon>';
+                } else {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:menu"></iconify-icon>';
+                }
+            });
+        }
+
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power2.out" });
+        });
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px'; cursorOutline.style.height = '60px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+            });
+            target.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        gsap.from('.reveal-text', { y: 50, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.5 });
+        gsap.from('.reveal-img', { scale: 1.1, opacity: 0, duration: 1.5, ease: "power3.out", delay: 0.8 });
+        gsap.to('#journey-img', { y: 50, ease: "none", scrollTrigger: { trigger: ".reveal-img", start: "top bottom", end: "bottom top", scrub: true } });
+
+        // Leaflet Map Initialization
+        setTimeout(() => {
+            if(document.getElementById('map')) {
+                const map = L.map('map', { scrollWheelZoom: false }).setView([23.5, 54.5], 6);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }).addTo(map);
+
+                const locations = [
+                    { day: "Day 01", name: "Dubai Arrival", coords: [25.2048, 55.2708] },
+                    { day: "Day 02", name: "Liwa Oasis", coords: [23.1313, 53.7672] },
+                    { day: "Day 03-05", name: "Rub' al Khali Deep Desert", coords: [22.8, 54.0] },
+                    { day: "Day 06", name: "Abu Dhabi", coords: [24.4539, 54.3773] },
+                    { day: "Day 07", name: "Departure", coords: [25.2532, 55.3657] }
+                ];
+
+                const pathCoords = locations.map(loc => loc.coords);
+                L.polyline(pathCoords, { color: '#C5A059', weight: 2, opacity: 0.5, dashArray: '5, 10' }).addTo(map);
+
+                locations.forEach(loc => {
+                    const marker = L.circleMarker(loc.coords, {
+                        color: '#C5A059', fillColor: '#C5A059', fillOpacity: 0.8, radius: 6
+                    }).addTo(map);
+                    marker.bindPopup(`<div class="text-center p-1"><strong class="text-black font-serif text-sm">${loc.day}</strong><br><span class="text-gray-600 text-xs">${loc.name}</span></div>`);
+                });
+            }
+        }, 1000);
+
+        // Lightbox Modal Setup
+        const lightbox = document.createElement('div');
+        lightbox.id = 'lightbox';
+        lightbox.className = 'fixed inset-0 z-[100] bg-black/25 hidden flex-col items-center justify-center opacity-0 backdrop-blur-[1px]';
+        lightbox.innerHTML = `
+            <button id="lightbox-close" class="absolute top-6 right-6 md:top-8 md:right-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 rounded-full backdrop-blur-sm">
+                <iconify-icon icon="lucide:x" width="24"></iconify-icon>
+            </button>
+            <div class="relative flex flex-col items-center justify-center w-full max-w-7xl px-12 md:px-20 max-h-[85vh]">
+                <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-2xl m-auto" alt="Gallery Image">
+                <button id="lightbox-prev" class="absolute left-2 md:left-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-sm">
+                    <iconify-icon icon="lucide:chevron-left" width="32"></iconify-icon>
+                </button>
+                <button id="lightbox-next" class="absolute right-2 md:right-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-sm">
+                    <iconify-icon icon="lucide:chevron-right" width="32"></iconify-icon>
+                </button>
+            </div>
+            <div id="lightbox-indicators" class="flex items-center justify-center gap-[20px] mt-4 z-50 w-full"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lbImg = document.getElementById('lightbox-img');
+        const lbPrev = document.getElementById('lightbox-prev');
+        const lbNext = document.getElementById('lightbox-next');
+        const lbClose = document.getElementById('lightbox-close');
+        const lbIndicators = document.getElementById('lightbox-indicators');
+        
+        let currentImages = [];
+        let currentIndex = 0;
+
+        function updateLightbox() {
+            gsap.to(lbImg, { opacity: 0, duration: 0.2, onComplete: () => {
+                lbImg.src = currentImages[currentIndex];
+                gsap.to(lbImg, { opacity: 1, duration: 0.3 });
+            }});
+            
+            lbIndicators.innerHTML = currentImages.map((_, i) => 
+                `<button class="w-2 h-2 rounded-full transition-colors ${i === currentIndex ? 'bg-[#C5A059]' : 'bg-white/20'}" onclick="goToImage(${i})"></button>`
+            ).join('');
+            
+            setTimeout(() => {
+                document.querySelectorAll('#lightbox-indicators button').forEach(btn => {
+                    btn.addEventListener('mouseenter', () => {
+                        cursorOutline.style.width = '50px'; cursorOutline.style.height = '50px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.2)';
+                    });
+                    btn.addEventListener('mouseleave', () => {
+                        cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+                    });
+                });
+            }, 50);
+        }
+
+        window.goToImage = (index) => {
+            currentIndex = index;
+            updateLightbox();
+        };
+
+        [lbPrev, lbNext, lbClose].forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px'; cursorOutline.style.height = '60px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        lbPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+            updateLightbox();
+        });
+
+        lbNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % currentImages.length;
+            updateLightbox();
+        });
+
+        lbClose.addEventListener('click', () => {
+            gsap.to(lightbox, { opacity: 0, duration: 0.4, onComplete: () => lightbox.classList.add('hidden') });
+        });
+
+        // Click Gallery Initialization
+        document.querySelectorAll('.gallery-container').forEach(container => {
+            const images = Array.from(container.querySelectorAll('img'));
+            if(images.length === 0) return;
+            
+            images.forEach((img, i) => {
+                if(i !== 0) gsap.set(img, { opacity: 0 });
+            });
+
+            container.addEventListener('mouseenter', () => {
+                gsap.to(images[0], { scale: 1.05, duration: 0.7, ease: "power2.out" });
+                cursorOutline.style.width = '60px'; 
+                cursorOutline.style.height = '60px'; 
+                cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+                gsap.to(images[0], { filter: 'brightness(0.7)', duration: 0.3 });
+                
+                if (!container.querySelector('.expand-icon')) {
+                    const icon = document.createElement('div');
+                    icon.className = 'expand-icon absolute inset-0 flex items-center justify-center opacity-0 z-10 pointer-events-none';
+                    icon.innerHTML = '<iconify-icon icon="lucide:expand" class="text-white text-3xl drop-shadow-lg"></iconify-icon>';
+                    container.appendChild(icon);
+                    gsap.to(icon, { opacity: 1, duration: 0.3 });
+                } else {
+                    gsap.to(container.querySelector('.expand-icon'), { opacity: 1, duration: 0.3 });
+                }
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                gsap.to(images[0], { scale: 1, duration: 0.7, ease: "power2.out" });
+                cursorOutline.style.width = '40px'; 
+                cursorOutline.style.height = '40px'; 
+                cursorOutline.style.backgroundColor = 'transparent';
+                gsap.to(images[0], { filter: 'brightness(1)', duration: 0.3 });
+                if (container.querySelector('.expand-icon')) {
+                    gsap.to(container.querySelector('.expand-icon'), { opacity: 0, duration: 0.3 });
+                }
+            });
+
+            container.addEventListener('click', () => {
+                currentImages = images.map(img => img.src);
+                currentIndex = 0;
+                lbImg.src = currentImages[currentIndex];
+                updateLightbox();
+                lightbox.classList.remove('hidden');
+                gsap.to(lightbox, { opacity: 1, duration: 0.4 });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khaymah | خيمة - Luxury Arabian Journeys</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --sand: #E8DCC4;
+            --dark: #0A0A0A;
+            --gold: #C5A059;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--sand);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(197, 160, 89, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Loader Tent Curtains */
+        .curtain {
+            position: fixed;
+            top: 0;
+            width: 50vw;
+            height: 100vh;
+            background-color: #111;
+            z-index: 5000;
+        }
+
+        .curtain-left {
+            left: 0;
+        }
+
+        .curtain-right {
+            right: 0;
+        }
+
+        .clip-tent {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+
+        /* Vertical Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: -1;
+            padding: 0 5vw;
+        }
+
+        .grid-line {
+            width: 1px;
+            height: 100%;
+            background-color: rgba(232, 220, 196, 0.05);
+        }
+
+        /* 4-Column Clip */
+        .clip-col {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .clip-col img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        .clip-1 {
+            left: 0;
+            width: 25%;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .clip-2 {
+            left: 25%;
+            width: 25%;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .clip-3 {
+            left: 50%;
+            width: 25%;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .clip-4 {
+            left: 75%;
+            width: 25%;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .clip-1 img {
+            left: 0;
+        }
+
+        .clip-2 img {
+            left: -25vw;
+        }
+
+        .clip-3 img {
+            left: -50vw;
+        }
+
+        .clip-4 img {
+            left: -75vw;
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .bg-gold {
+            background-color: var(--gold);
+        }
+
+        .border-gold {
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-[#C5A059] selection:text-white">
+
+    <!-- Noise -->
+    <div class="noise"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- Vertical Grid Lines -->
+    <div class="grid-lines">
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+    </div>
+
+    <!-- Loader Overlay Slogan -->
+    <div class="fixed inset-0 z-[5001] flex flex-col items-center justify-center pointer-events-none"
+        id="loader-content">
+        <div class="text-4xl md:text-6xl serif text-gold opacity-0 mb-6 flex items-center justify-center"
+            id="loader-brand">
+            Khaymah <span class="text-3xl ml-4">خيمة</span>
+        </div>
+        <div class="text-sm md:text-base text-white/70 tracking-[0.4em] uppercase opacity-0" id="loader-slogan">
+            您的阿拉伯史詩旅程
+        </div>
+    </div>
+
+    <!-- Loader (Tent Curtains) -->
+    <div class="curtain curtain-left clip-tent" id="curtain-left"></div>
+    <div class="curtain curtain-right clip-tent" id="curtain-right"></div>
+    <div class="curtain curtain-right" id="curtain-right">
+        <div class="text-4xl serif text-gold opacity-0" id="loader-text-2">خيمة</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference">
+        <a href="index-zh.html" class="text-2xl serif tracking-widest uppercase hover-target">Khaymah <span
+                class="text-sm text-gold ml-2">خيمة</span></a>
+        <div class="hidden md:flex gap-8 text-sm tracking-widest uppercase items-center">
+            <a href="index-zh.html" class="hover:text-gold transition-colors hover-target">首頁</a>
+            <a href="about-zh.html" class="hover:text-gold transition-colors hover-target">關於我們</a>
+            <a href="contact-zh.html" class="hover:text-gold transition-colors hover-target">聯絡我們</a>
+            <!-- Language Selector -->
+            <div class="relative group ml-4 pl-4 border-l border-white/20">
+                <button class="flex items-center gap-2 hover:text-gold transition-colors hover-target uppercase">
+                    <iconify-icon icon="lucide:globe" width="18"></iconify-icon>
+                    中文
+                </button>
+                <div
+                    class="absolute right-0 top-full pt-6 w-32 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto translate-y-2 group-hover:translate-y-0">
+                    <div class="bg-[#0A0A0A] border border-white/10 rounded-lg overflow-hidden">
+                        <a href="index.html"
+                            class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors">English</a>
+                        <a href="#"
+                            class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors items-center justify-between">中文
+                            <span class="text-gold"><iconify-icon icon="lucide:check"
+                                    width="14"></iconify-icon></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="menu-btn" class="md:hidden text-2xl hover-target relative z-50">
+            <iconify-icon icon="lucide:menu"></iconify-icon>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+        class="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-500">
+        <a href="index-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">首頁</a>
+        <a href="about-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">關於我們</a>
+        <a href="contact-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">聯絡我們</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+        <!-- Full Screen Background -->
+        <div class="absolute inset-0 z-0 overflow-hidden" id="hero-bg">
+            <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=2500&auto=format&fit=crop"
+                class="w-full h-full object-cover origin-center" alt="Desert Landscape" referrerPolicy="no-referrer"
+                id="hero-img">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 mt-20">
+            <div class="overflow-hidden mb-4 pb-2">
+                <p class="text-gold tracking-[0.3em] text-sm md:text-base uppercase hero-text translate-y-full">Beyond
+                    the Dunes<br><span class="text-xs tracking-widest mt-1 opacity-70">沙丘之外</span></p>
+            </div>
+            <div class="overflow-hidden pb-4">
+                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight">
+                    Arabian</h1>
+            </div>
+            <div class="overflow-hidden mb-8 pb-6">
+                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight">
+                    Elegance <span class="text-3xl md:text-6xl text-gold not-italic">أناقة</span><br><span
+                        class="text-2xl md:text-3xl text-white/50 block mt-4 font-sans tracking-widest">阿拉伯之雅</span>
+                </h1>
+            </div>
+            <div class="overflow-hidden pt-4">
+                <a href="#journeys"
+                    class="inline-flex items-center gap-3 border border-white/30 px-8 py-4 rounded-full hover:bg-white hover:text-black transition-all duration-500 hover-target hero-text translate-y-full">
+                    <span class="uppercase tracking-widest text-xs">Discover the Tent</span>
+                    <iconify-icon icon="lucide:arrow-down-right"></iconify-icon>
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-10 text-xs tracking-widest text-white/50 rotate-[-90deg] origin-left">
+            01 &mdash; THE AWAKENING
+        </div>
+    </section>
+
+    <!-- Journeys Section -->
+    <section id="journeys" class="py-32 px-6 md:px-20 relative border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight">
+                    Curated Journeys <br>
+                    <span class="text-gold italic">رحلاتنا</span>
+                    <br><span class="text-xl md:text-2xl text-white/50 block mt-4 font-sans tracking-widest">精選旅程</span>
+                </h2>
+                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed">
+                    探索我們精心雕琢的奢華行程，從一週的私密逃逸，到長達三週的阿拉伯半島史詩壯遊。
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-32">
+                <!-- Journey 1 -->
+                <div class="flex flex-col md:flex-row items-center gap-12 group value-card">
+                    <a href="journey-1-zh.html"
+                        class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
+                        <img src="https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            alt="7 Days Journey" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                    </a>
+                    <div class="w-full md:w-2/5 space-y-6 md:pl-10">
+                        <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4">
+                            <span class="w-10 h-px bg-gold"></span> 7 Days
+                        </div>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Empty Quarter
+                            Escape<br><span
+                                class="text-xl md:text-2xl text-white/50 block mt-2 font-sans tracking-widest">沙丘謐境逃逸之旅</span>
+                        </h3>
+                        <div class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70">
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Dubai</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Liwa Oasis</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Empty Quarter</span>
+                        </div>
+                        <p class="text-white/50 text-sm leading-relaxed">深入探索世界上最大的連綿沙地——魯卜哈利沙漠 (Rub' al
+                            Khali)。體驗流沙的變幻莫測，在無光害的璀璨星空下入眠，並發掘古老貝都因人的生存智慧。</p>
+                        <a href="journey-1-zh.html"
+                            class="inline-flex items-center gap-3 text-gold uppercase tracking-widest text-xs hover-target group-hover:translate-x-2 transition-transform">
+                            探索旅程 <iconify-icon icon="lucide:arrow-right"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Journey 2 -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-12 group value-card">
+                    <a href="journey-2-zh.html"
+                        class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
+                        <img src="asset/199b165ae84ce4330562a6b64dc6d35f.jpg"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            alt="14 Days Journey" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                    </a>
+                    <div class="w-full md:w-2/5 space-y-6 md:pr-10 text-left md:text-right">
+                        <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4 md:justify-end">
+                            14 Days <span class="w-10 h-px bg-gold"></span>
+                        </div>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Bedouin Heritage
+                            Trail<br><span
+                                class="text-xl md:text-2xl text-white/50 block mt-2 font-sans tracking-widest">貝都因傳承之路</span>
+                        </h3>
+                        <div
+                            class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70 md:justify-end">
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Dubai</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Musandam</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Nizwa</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Wahiba Sands</span>
+                        </div>
+                        <p class="text-white/50 text-sm leading-relaxed">
+                            這是一趟追尋古代貿易路線的深度兩週之旅。將阿曼壯麗崎嶇的山脈與阿拉伯聯合大公國純淨無瑕的沙丘完美融合，探索古老堡壘與生機勃勃的傳統市集。</p>
+                        <a href="journey-2-zh.html"
+                            class="inline-flex items-center gap-3 text-gold uppercase tracking-widest text-xs hover-target group-hover:-translate-x-2 transition-transform md:flex-row-reverse">
+                            探索旅程 <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Journey 3 -->
+                <div class="flex flex-col md:flex-row items-center gap-12 group value-card">
+                    <a href="journey-3-zh.html"
+                        class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
+                        <img src="asset/40301ed4c72e4eae80b704b36d5d0a79.jpg"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            alt="21 Days Journey" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                    </a>
+                    <div class="w-full md:w-2/5 space-y-6 md:pl-10">
+                        <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4">
+                            <span class="w-10 h-px bg-gold"></span> 21 Days
+                        </div>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Grand Arabian
+                            Odyssey<br><span
+                                class="text-xl md:text-2xl text-white/50 block mt-2 font-sans tracking-widest">阿拉伯壯遊史詩</span>
+                        </h3>
+                        <div class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70">
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Riyadh</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">AlUla</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Abu Dhabi</span>
+                            <span class="border border-white/20 px-3 py-1 rounded-full">Oman</span>
+                        </div>
+                        <p class="text-white/50 text-sm leading-relaxed">
+                            阿拉伯奢華體驗的終極體現。橫跨沙烏地阿拉伯、阿聯酋與阿曼的壯麗地形，從古老的納巴泰陵墓到充滿未來感的摩天大樓天際線，一次盡收眼底。</p>
+                        <a href="journey-3-zh.html"
+                            class="inline-flex items-center gap-3 text-gold uppercase tracking-widest text-xs hover-target group-hover:translate-x-2 transition-transform">
+                            探索旅程 <iconify-icon icon="lucide:arrow-right"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section id="heritage" class="py-32 px-6 md:px-20 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight">
+                    Rooted in tradition, <br>
+                    <span class="text-gold italic">elevated for the modern explorer.</span>
+                    <br><span class="text-xl md:text-2xl text-white/50 block mt-4 font-sans tracking-widest">紮根傳統 ．
+                        為現代探索者而昇華</span>
+                </h2>
+                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed">
+                    Khaymah 為您開啟通往雄偉阿拉伯之地的專屬門戶，將古老的貝都因式款待與無可比擬的奢華體驗完美融合。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Value 1 -->
+                <div class="group value-card">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
+                        <img src="https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?q=80&w=1000&auto=format&fit=crop"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            alt="Culture" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                        <div class="absolute top-4 right-4 text-gold text-2xl serif">تراث</div>
+                    </div>
+                    <div class="flex items-center gap-4 mb-3">
+                        <span class="text-gold text-sm">01</span>
+                        <div class="h-px bg-white/20 flex-1"></div>
+                    </div>
+                    <h3 class="text-2xl serif mb-2">文化沉浸 (Cultural Immersion)</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">與當地工匠、歷史學家面對面交流，體驗不受時光侵蝕的沙漠生活方式。</p>
+                </div>
+                <!-- Value 2 -->
+                <div class="group value-card md:mt-16">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
+                        <img src="https://images.unsplash.com/photo-1528287942171-fbe365d1d9cb?q=80&w=1000&auto=format&fit=crop"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            alt="Luxury" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                        <div class="absolute top-4 right-4 text-gold text-2xl serif">فخامة</div>
+                    </div>
+                    <div class="flex items-center gap-4 mb-3">
+                        <span class="text-gold text-sm">02</span>
+                        <div class="h-px bg-white/20 flex-1"></div>
+                    </div>
+                    <h3 class="text-2xl serif mb-2">精緻舒適 (Refined Comfort)</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">在足以媲美世界頂級套房的奢華帳篷中，枕著星空入眠。</p>
+                </div>
+                <!-- Value 3 -->
+                <div class="group value-card md:mt-32">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
+                        <img src="https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=1000&auto=format&fit=crop"
+                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            alt="Serenity" referrerPolicy="no-referrer">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
+                        </div>
+                        <div class="absolute top-4 right-4 text-gold text-2xl serif">هدوء</div>
+                    </div>
+                    <div class="flex items-center gap-4 mb-3">
+                        <span class="text-gold text-sm">03</span>
+                        <div class="h-px bg-white/20 flex-1"></div>
+                    </div>
+                    <h3 class="text-2xl serif mb-2">極致寧靜 (Absolute Serenity)</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">逃離喧囂。在廣袤沉靜的金黃沙丘中找尋內心的平靜。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners -->
+    <section class="py-20 border-y border-white/10 bg-black/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs tracking-[0.2em] text-white/40 uppercase mb-10">Trusted by Global Visionaries</p>
+            <div
+                class="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                <iconify-icon icon="simple-icons:fourseasons" width="40"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:emirates" width="60"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:qatarairways" width="70"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:condenast" width="100"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:rolex" width="60"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:marriott" width="80"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:natgeo" width="80"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+                <iconify-icon icon="simple-icons:porsche" width="50"
+                    class="hover:text-gold transition-colors hover-target"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <div class="react-testimonial-mount" data-lang="zh"></div>
+    <!-- Bespoke Concierge / CTA -->
+    <section id="concierge" class="py-32 px-6 relative overflow-hidden flex items-center justify-center min-h-[80vh]">
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1541785501309-c12d4d98a9d1?q=80&w=2500&auto=format&fit=crop"
+                class="w-full h-full object-cover" alt="Luxury Desert Setting" referrerPolicy="no-referrer">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-[#0A0A0A]"></div>
+        </div>
+
+        <div
+            class="relative z-10 w-full max-w-4xl mx-auto backdrop-blur-xl bg-black/40 border border-white/10 rounded-3xl p-10 md:p-20 text-center overflow-hidden">
+            <!-- decorative corner accents -->
+            <div class="absolute top-0 left-0 w-16 h-16 border-t border-l border-gold/50 rounded-tl-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-gold/50 rounded-br-3xl"></div>
+
+            <p class="text-gold tracking-[0.3em] text-xs uppercase mb-6 flex items-center justify-center gap-4">
+                <span class="w-8 h-px bg-gold"></span> Royal Concierge <span class="w-8 h-px bg-gold"></span>
+            </p>
+            <h2 class="text-4xl md:text-7xl serif mb-6 leading-tight">
+                Craft Your <span class="italic text-gold">Bespoke</span> Journey
+                <br><span
+                    class="text-2xl md:text-3xl text-white/50 block mt-4 font-sans tracking-widest">打造您的專屬客製旅程</span>
+            </h2>
+            <p class="text-white/60 mb-12 max-w-lg mx-auto text-sm leading-relaxed">
+                直接聯繫我們的專屬皇家禮賓。分享您的願望，我們將為您量身打造一場絕不妥寫、唯您獨享的阿拉伯壯遊史詩。
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <a href="contact-zh.html"
+                    class="w-full sm:w-auto relative group inline-flex items-center justify-center px-10 py-5 bg-gold text-black rounded-full overflow-hidden hover-target transition-transform hover:scale-105">
+                    <span class="uppercase tracking-widest text-xs font-medium z-10 flex items-center gap-3">
+                        <iconify-icon icon="lucide:message-square"></iconify-icon> 預約諮詢
+                    </span>
+                    <div
+                        class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-0">
+                    </div>
+                </a>
+                <a href="#journeys"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 border border-white/20 rounded-full hover:bg-white/10 transition-colors duration-300 hover-target">
+                    <span class="uppercase tracking-widest text-xs text-white">了解更多</span>
+                </a>
+            </div>
+
+            <div class="mt-12 flex items-center justify-center gap-8 text-white/40 text-xs uppercase tracking-widest">
+                <div class="flex items-center gap-2">
+                    <iconify-icon icon="lucide:clock" class="text-gold"></iconify-icon> 全天候服務 (24/7)
+                </div>
+                <div class="flex items-center gap-2">
+                    <iconify-icon icon="lucide:shield-check" class="text-gold"></iconify-icon> 絕佳隱密性 (Absolute Privacy)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pt-24 pb-12 px-6 md:px-20 border-t border-white/10 bg-black">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 mb-20">
+            <div class="max-w-sm">
+                <a href="index-zh.html" class="text-4xl serif tracking-widest uppercase block mb-6 hover-target">Khaymah
+                    <span class="text-2xl text-gold ml-2">خيمة</span></a>
+                <p class="text-white/60 text-sm leading-relaxed mb-8">
+                    紮根傳統，為現代探索者而昇華。與我們一同在無可比擬的奢華中，體驗壯麗的阿拉伯景觀。
+                </p>
+                <a href="mailto:concierge@khaymah.com"
+                    class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center justify-center gap-3 w-fit hover-target border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
+                    <iconify-icon icon="lucide:mail"></iconify-icon> concierge@khaymah.com
+                </a>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-12 md:gap-24 mt-4 md:mt-0">
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">導航 (Navigation)</h4>
+                    <a href="index-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">首頁</a>
+                    <a href="about-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">關於我們</a>
+                    <a href="#journeys"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">精選旅程</a>
+                    <a href="contact-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">聯絡我們</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">社群媒體 (Socials)</h4>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:instagram"></iconify-icon> Instagram</a>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:twitter"></iconify-icon> Twitter</a>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:youtube"></iconify-icon> YouTube</a>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40 tracking-widest uppercase">
+            <div>&copy; 2026 Khaymah Luxury Travel. All rights reserved.</div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition-colors hover-target">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors hover-target">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:x"></iconify-icon>';
+                } else {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:menu"></iconify-icon>';
+                }
+            });
+        }
+
+        // Custom Cursor
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power2.out" });
+        });
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+            });
+            target.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // Loading Animation (Tent Curtains Opening)
+        const tl = gsap.timeline();
+
+        // Show text briefly
+        tl.to(['#loader-brand'], { y: -10, opacity: 1, duration: 1, ease: "power2.out" })
+            .to(['#loader-slogan'], { y: -10, opacity: 1, duration: 1, ease: "power2.out" }, "-=0.5")
+            .to(['#loader-brand', '#loader-slogan'], { opacity: 0, duration: 0.8, delay: 1 })
+            // Open curtains like a tent (Clip Path reveals the middle bottom opening outward like flaps)
+            .set('#curtain-left', { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)' })
+            .set('#curtain-right', { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)' })
+            .to('#curtain-left', { x: '-50%', opacity: 0, clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%, 0% 100%)', duration: 2, ease: 'power3.inOut', display: 'none' }, 'open')
+            .to('#curtain-right', { x: '50%', opacity: 0, clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%)', duration: 2, ease: 'power3.inOut', display: 'none' }, 'open')
+            // Hero Image Reveal
+            .fromTo('#hero-img',
+                { scale: 1.2 },
+                { scale: 1, duration: 2, ease: "power3.out" },
+                "open+=0.5"
+            )
+            // Hero Text Reveal
+            .to('.hero-text', { y: 0, duration: 1, ease: "power3.out", stagger: 0.1 }, "open+=1");
+
+        // Parallax for hero image on scroll
+        gsap.to('#hero-img', { y: 200, ease: "none", scrollTrigger: { trigger: "#hero-bg", start: "top top", end: "bottom top", scrub: true } });
+
+        // Value Cards Reveal
+        gsap.utils.toArray('.value-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        // Concierge Section Reveal
+        gsap.from("#concierge > div:nth-child(2)", {
+            scrollTrigger: {
+                trigger: "#concierge",
+                start: "top 80%",
+            },
+            y: 80,
+            opacity: 0,
+            duration: 1.2,
+            ease: "power3.out"
+        });
+
+        // Partner Logos Reveal
+        gsap.from("section:has(iconify-icon[icon^='simple-icons']) iconify-icon", {
+            scrollTrigger: {
+                trigger: "section:has(iconify-icon[icon^='simple-icons'])",
+                start: "top 85%",
+            },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out"
+        });
+
+        // Footer Elements Reveal
+        gsap.from("footer > div", {
+            scrollTrigger: {
+                trigger: "footer",
+                start: "top 90%",
+            },
+            y: 30,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+    </script>
+
+</body>
+
+</html>

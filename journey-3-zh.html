@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grand Arabian Odyssey | Khaymah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --sand: #E8DCC4;
+            --dark: #0A0A0A;
+            --gold: #C5A059;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--sand);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(197, 160, 89, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: -1;
+            padding: 0 5vw;
+        }
+
+        .grid-line {
+            width: 1px;
+            height: 100%;
+            background-color: rgba(232, 220, 196, 0.05);
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .bg-gold {
+            background-color: var(--gold);
+        }
+
+        .border-gold {
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-[#C5A059] selection:text-white opacity-0" id="page-body">
+
+    <div class="noise"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <div class="grid-lines">
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference">
+        <a href="index-zh.html" class="text-2xl serif tracking-widest uppercase hover-target">Khaymah <span
+                class="text-sm text-gold ml-2">خيمة</span></a>
+        <div class="hidden md:flex gap-8 text-sm tracking-widest uppercase">
+            <a href="index-zh.html" class="hover:text-gold transition-colors hover-target">首頁</a>
+            <a href="about-zh.html" class="hover:text-gold transition-colors hover-target">關於我們</a>
+            <a href="contact-zh.html" class="hover:text-gold transition-colors hover-target">聯絡我們</a>
+            <!-- Language Selector -->
+            <div class="relative group ml-4 pl-4 border-l border-white/20">
+                <button class="flex items-center gap-2 hover:text-gold transition-colors hover-target uppercase">
+                    <iconify-icon icon="lucide:globe" width="18"></iconify-icon>
+                    中文
+                </button>
+                <div
+                    class="absolute right-0 top-full pt-6 w-32 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto translate-y-2 group-hover:translate-y-0">
+                    <div class="bg-[#0A0A0A] border border-white/10 rounded-lg overflow-hidden">
+                        <a href="journey-3.html"
+                            class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors">English</a>
+                        <a href="#"
+                            class="flex px-4 py-3 hover:bg-white/10 hover:text-gold transition-colors items-center justify-between">中文
+                            <span class="text-gold"><iconify-icon icon="lucide:check"
+                                    width="14"></iconify-icon></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <button id="menu-btn" class="md:hidden text-2xl hover-target relative z-50"><iconify-icon
+                icon="lucide:menu"></iconify-icon></button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+        class="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-500">
+        <a href="index-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">首頁</a>
+        <a href="about-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">關於我們</a>
+        <a href="contact-zh.html"
+            class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">聯絡我們</a>
+    </div>
+
+    <!-- Journey Hero -->
+    <section class="pt-40 pb-20 min-h-screen flex flex-col justify-center">
+        <div class="px-6 md:px-20 max-w-7xl mx-auto w-full">
+            <div class="mb-8 reveal-text">
+                <span
+                    class="text-gold tracking-widest uppercase text-xs border border-gold/30 px-4 py-2 rounded-full">21
+                    Days / 20 Nights</span>
+            </div>
+            <h1 class="text-5xl md:text-8xl serif mb-16 reveal-text leading-tight">The Grand Arabian <br><span
+                    class="text-gold italic text-4xl md:text-6xl">Odyssey</span><br><span
+                    class="text-2xl md:text-3xl text-white/50 block mt-4 font-sans tracking-widest">阿拉伯盛世奧德賽</span></h1>
+        </div>
+
+        <div class="relative w-full h-[500px] md:h-[75vh] overflow-hidden reveal-img mb-20"><img
+                src="asset/40301ed4c72e4eae80b704b36d5d0a79.jpg" class="w-full h-full object-cover object-bottom"
+                alt="The Grand Arabian Odyssey" referrerPolicy="no-referrer" id="journey-img"></div>
+
+        <div class="px-6 md:px-20 max-w-7xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
+                <div class="md:col-span-8 space-y-12 text-white/70 leading-relaxed text-sm md:text-base reveal-text">
+                    <div>
+                        <h2 class="text-3xl serif text-white mb-6">旅程總覽 (Overview)</h2>
+                        <p>阿拉伯奢華與探索的極致體現。在為期三週的旅程中，您將橫跨沙烏地阿拉伯、阿拉伯聯合大公國與阿曼最令人驚嘆的景致。從埃爾奧拉 (埃爾奧拉 (AlUla))
+                            古老的納巴泰古墓，到杜拜充滿未來感的城市天際線，再到阿曼寧靜神聖的河谷 (Wadis)，這是一場專為最具品味的旅人量身打造、一生一次的壯闊探險。</p>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl serif text-white mb-6">特色亮點 (Highlights)</h2>
+                        <ul class="list-disc pl-5 space-y-3">
+                            <li>主要目的地之間的私人包機接送。</li>
+                            <li>獨家開放：在非開放時間私人遊覽聯合國教科文組織世界遺產——黑格拉 (Hegra, 埃爾奧拉 (AlUla))。</li>
+                            <li>為期多日的私人遊艇包船，漫遊阿拉伯灣。</li>
+                            <li>入住最頂級的沙漠度假村以及我們專屬定制的 Khaymah 皇家營地。</li>
+                            <li>在偏遠沙漠秘境，由米其林星級主廚打造的私人晚宴體驗。</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl serif text-white mb-6">適合對象 (Who is this for?)</h2>
+                        <p>專為追求極致奢華、隱私保障與深度文化沉浸的各界菁英設計。這趟旅程適合那些希望在不犧牲任何細節與專屬感的前提下，飽覽整個阿拉伯半島風采的旅人。</p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 reveal-text">
+                    <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm sticky top-32">
+                        <h3 class="text-2xl serif text-white mb-6">旅程細節 (Details)</h3>
+                        <div class="space-y-4 mb-8 text-sm">
+                            <div class="flex justify-between border-b border-white/10 pb-4">
+                                <span class="text-white/50">目的地</span>
+                                <span class="text-right">沙烏地阿拉伯、阿聯酋、阿曼</span>
+                            </div>
+                            <div class="flex justify-between border-b border-white/10 pb-4">
+                                <span class="text-white/50">天數</span>
+                                <span class="text-right">21 天</span>
+                            </div>
+                            <div class="flex justify-between border-b border-white/10 pb-4">
+                                <span class="text-white/50">每人費用</span>
+                                <span class="text-gold text-right">$48,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Internal Financial Estimation -->
+                        <div class="bg-black/40 p-4 rounded-xl mb-8 border border-white/5">
+                            <div class="text-xs text-white/40 uppercase tracking-widest mb-3">Internal Estimation</div>
+                            <div class="flex justify-between mb-2 text-sm">
+                                <span class="text-white/50">Est. Cost (成本)</span>
+                                <span class="text-white">$35,000</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-white/50">Est. Profit</span>
+                                <span class="text-[#4ade80]">$13,000 (27%)</span>
+                            </div>
+                        </div>
+
+                        <a href="contact-zh.html"
+                            class="group relative inline-flex items-center justify-center w-full py-4 border border-gold/50 bg-black/20 backdrop-blur-md hover:bg-gold hover:text-black transition-all duration-500 hover-target overflow-hidden rounded-full">
+                            <div
+                                class="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out rounded-full">
+                            </div>
+                            <span class="relative z-10 uppercase tracking-widest text-xs flex items-center gap-2">
+                                預約旅程 (Reserve Journey)
+                                <iconify-icon icon="lucide:arrow-right"
+                                    class="group-hover:translate-x-2 transition-transform"></iconify-icon>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Map -->
+            <div class="mt-32 reveal-text">
+                <h2 class="text-3xl serif text-white mb-8">旅程地圖 (Journey Map)</h2>
+                <div id="map"
+                    class="w-full h-[400px] md:h-[500px] rounded-2xl z-10 relative border border-white/10 grayscale-[80%] hover:grayscale-0 transition-all duration-700">
+                </div>
+            </div>
+
+            <!-- Itinerary Timeline -->
+            <div class="mt-32 space-y-12 mb-20">
+                <h2 class="text-3xl serif text-white mb-12">每日行程 (Itinerary)</h2>
+
+                <!-- Day 1-3 -->
+                <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                    <div class="md:w-1/4">
+                        <div class="text-gold text-2xl serif">第 01 天 - 03</div>
+                        <div class="text-white/50 text-sm uppercase tracking-widest mt-1">沙烏地阿拉伯，利雅德</div>
+                    </div>
+                    <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                        <p><strong>目的地：</strong> 利雅德 (Riyadh)<br>
+                            <strong>飯店：</strong> Four Seasons Hotel Riyadh at Kingdom Centre<br>
+                            <strong>交通工具：</strong> 私人 Maybach 禮車接送
+                        </p>
+                        <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                            <li><span class="text-gold">08:00 - 10:00:</span> 在飯店享用早餐。</li>
+                            <li><span class="text-gold">10:00 - 13:00:</span> 探索王國的發源地——德拉伊耶 (Diriyah)，這是一處聯合國教科文組織世界遺產。
+                            </li>
+                            <li><span class="text-gold">13:00 - 15:00:</span> 在 Najd Village 享用正宗沙烏地料理。</li>
+                            <li><span class="text-gold">15:00 - 18:00:</span> 參觀國家博物館與穆拉巴宮 (Murabba Palace)。</li>
+                            <li><span class="text-gold">18:00 - 20:00:</span> 從王國中心天橋 (Sky Bridge) 俯瞰日落美景。</li>
+                            <li><span class="text-gold">20:00 - 22:00:</span> 在 The Globe 享受私人晚宴。</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                        <img src="https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 1"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1622214648710-5309d43d0e98?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 2"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 3"
+                            referrerPolicy="no-referrer">
+                    </div>
+                </div>
+
+                <!-- Day 4-7 -->
+                <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                    <div class="md:w-1/4">
+                        <div class="text-gold text-2xl serif">第 04 - 07 天</div>
+                        <div class="text-white/50 text-sm uppercase tracking-widest mt-1">埃爾奧拉 (AlUla)</div>
+                    </div>
+                    <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                        <p><strong>目的地：</strong> 埃爾奧拉 (AlUla)<br>
+                            <strong>飯店：</strong> Habitas 埃爾奧拉 (AlUla)<br>
+                            <strong>交通工具：</strong> 私人包機 (2 小時) 與奢華 4x4 越野車
+                        </p>
+                        <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                            <li><span class="text-gold">06:00 - 09:00:</span> 清晨搭乘熱氣球，俯瞰超現實的岩石奇觀。</li>
+                            <li><span class="text-gold">09:00 - 11:00:</span> Breakfast at the resort.</li>
+                            <li><span class="text-gold">11:00 - 14:00:</span> 獨家開放：在非公開時間私人導覽黑格拉 (Hegra) 的巨型陵墓。</li>
+                            <li><span class="text-gold">14:00 - 16:00:</span> 在 Tama 餐廳享用午餐。</li>
+                            <li><span class="text-gold">16:00 - 19:00:</span> 日落時分探索老城區與大象岩 (Elephant Rock)。</li>
+                            <li><span class="text-gold">19:00 - 21:00:</span> 在 Jason Atherton 主理的 Maraya Social 享用晚宴。
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                        <img src="https://images.unsplash.com/photo-1643101808488-821245009a25?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="埃爾奧拉 (AlUla) 1"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1610555356070-d1fb3d9fb5ee?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="埃爾奧拉 (AlUla) 2"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1643101809204-712341857945?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="埃爾奧拉 (AlUla) 3"
+                            referrerPolicy="no-referrer">
+                    </div>
+                </div>
+
+                <!-- Day 8-11 -->
+                <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                    <div class="md:w-1/4">
+                        <div class="text-gold text-2xl serif">第 08 天 - 11</div>
+                        <div class="text-white/50 text-sm uppercase tracking-widest mt-1">杜拜 與 阿布達比</div>
+                    </div>
+                    <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                        <p><strong>目的地：</strong> 杜拜 與 阿布達比, 阿聯酋 (UAE)<br>
+                            <strong>飯店：</strong> 杜拜帆船飯店 (Burj Al Arab Jumeirah)<br>
+                            <strong>交通工具：</strong> 頭等艙航班 (2 小時) 與直升機
+                        </p>
+                        <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                            <li><span class="text-gold">08:00 - 11:00:</span> 飛抵阿聯酋，享用 VIP 機場接送。</li>
+                            <li><span class="text-gold">11:00 - 13:00:</span> 入住帆船飯店。</li>
+                            <li><span class="text-gold">13:00 - 15:00:</span> 在 Al Muntaha 享用午餐。</li>
+                            <li><span class="text-gold">15:00 - 17:00:</span> 直升機俯瞰朱美拉棕櫚島 (Palm Jumeirah)。</li>
+                            <li><span class="text-gold">17:00 - 19:00:</span> 私人遊覽阿布達比羅浮宮。</li>
+                            <li><span class="text-gold">19:00 - 21:00:</span> 在杜拜沙漠保護區體驗獨家沙漠衝沙。</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Dubai 1"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1582672060624-cb87e076644f?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Dubai 2"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Dubai 3"
+                            referrerPolicy="no-referrer">
+                    </div>
+                </div>
+
+                <!-- 第 12 天-16 -->
+                <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                    <div class="md:w-1/4">
+                        <div class="text-gold text-2xl serif">第 12 天 - 16</div>
+                        <div class="text-white/50 text-sm uppercase tracking-widest mt-1">馬斯喀特 與 綠山 (Jabal Akhdar)</div>
+                    </div>
+                    <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                        <p><strong>目的地：</strong> 馬斯喀特 與 阿曼哈傑爾山脈 (Muscat & Al Hajar Mountains, Oman)<br>
+                            <strong>飯店：</strong> Alila Jabal Akhdar<br>
+                            <strong>交通工具：</strong> 飛往 MCT 的航班 (1 小時) 與豪華 4x4 越野車
+                        </p>
+                        <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                            <li><span class="text-gold">08:00 - 11:00:</span> 前往阿曼。探索首都馬斯喀特。</li>
+                            <li><span class="text-gold">11:00 - 13:00:</span> 參觀蘇丹卡布斯大清真寺與馬托拉市集 (Mutrah Souq)。</li>
+                            <li><span class="text-gold">13:00 - 15:00:</span> 在 Bait Al Luban 享用午餐。</li>
+                            <li><span class="text-gold">15:00 - 18:00:</span> 登上哈傑爾山脈，入住 Alila Jabal Akhdar。</li>
+                            <li><span class="text-gold">18:00 - 20:00:</span> 徒步穿越古老的梯田村落與石榴園。</li>
+                            <li><span class="text-gold">20:00 - 22:00:</span> 在 Juniper 餐廳享用晚宴。</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                        <img src="https://images.unsplash.com/photo-1542052125323-e69ad37a47c2?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 1"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1621251918451-2e6e3f5d5225?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 2"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1560613271-88f572412e8b?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 3"
+                            referrerPolicy="no-referrer">
+                    </div>
+                </div>
+
+                <!-- 第 17 天-21 -->
+                <div class="flex flex-col md:flex-row gap-8 border-t border-white/10 pt-8 reveal-text">
+                    <div class="md:w-1/4">
+                        <div class="text-gold text-2xl serif">第 17 天 - 21</div>
+                        <div class="text-white/50 text-sm uppercase tracking-widest mt-1">塞拉萊 (Salalah) 與 賦歸</div>
+                    </div>
+                    <div class="md:w-1/2 text-white/70 text-sm leading-relaxed space-y-4">
+                        <p><strong>目的地：</strong> 塞拉萊，阿曼 (Salalah, Oman)<br>
+                            <strong>飯店：</strong> Al Baleed Resort Salalah by Anantara<br>
+                            <strong>交通工具：</strong> 國內航班 (1.5 小時) 與私人車輛接送
+                        </p>
+                        <ul class="space-y-2 border-l border-white/10 pl-4 ml-2">
+                            <li><span class="text-gold">08:00 - 11:00:</span> 飛往南端的塞拉萊 (Salalah)，這裡被譽為阿拉伯的香料之都。</li>
+                            <li><span class="text-gold">11:00 - 13:00:</span> 入住海濱度假村。</li>
+                            <li><span class="text-gold">13:00 - 15:00:</span> 在 Mekong 餐廳享用午餐。</li>
+                            <li><span class="text-gold">15:00 - 18:00:</span> 探索鬱鬱蔥蔥的河谷、純淨的白沙灘以及古代乳香貿易路線的遺跡。</li>
+                            <li><span class="text-gold">18:00 - 20:00:</span> 以一場私人海濱歡送宴，為這段史詩般的旅程畫下完美句點。</li>
+                            <li><span class="text-gold">20:00 - 21:00:</span> （第 21 天）私人接送至機場，搭機返家。</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
+                        <img src="https://images.unsplash.com/photo-1528287942171-fbe365d1d9cb?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Salalah 1"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Salalah 2"
+                            referrerPolicy="no-referrer">
+                        <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=800&auto=format&fit=crop"
+                            class="absolute inset-0 w-full h-full object-cover" alt="Salalah 3"
+                            referrerPolicy="no-referrer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pt-24 pb-12 px-6 md:px-20 border-t border-white/10 bg-black">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 mb-20">
+            <div class="max-w-sm">
+                <a href="index-zh.html" class="text-4xl serif tracking-widest uppercase block mb-6 hover-target">Khaymah
+                    <span class="text-2xl text-gold ml-2">خيمة</span></a>
+                <p class="text-white/60 text-sm leading-relaxed mb-8">
+                    紮根傳統，為現代探索者而昇華。與我們一同在無可比擬的奢華中，體驗壯麗的阿拉伯景觀。
+                </p>
+                <a href="mailto:concierge@khaymah.com"
+                    class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center justify-center gap-3 w-fit hover-target border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
+                    <iconify-icon icon="lucide:mail"></iconify-icon> concierge@khaymah.com
+                </a>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-12 md:gap-24 mt-4 md:mt-0">
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">導航 (Navigation)</h4>
+                    <a href="index-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">首頁</a>
+                    <a href="about-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">關於我們</a>
+                    <a href="#journeys"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">精選旅程</a>
+                    <a href="contact-zh.html"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">聯絡我們</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">社群媒體 (Socials)</h4>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:instagram"></iconify-icon> Instagram</a>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:twitter"></iconify-icon> Twitter</a>
+                    <a href="#"
+                        class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon
+                            icon="lucide:youtube"></iconify-icon> YouTube</a>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40 tracking-widest uppercase">
+            <div>&copy; 2026 Khaymah Luxury Travel. All rights reserved.</div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition-colors hover-target">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors hover-target">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.to('#page-body', { opacity: 1, duration: 1.5, ease: "power2.out" });
+
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:x"></iconify-icon>';
+                } else {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuBtn.innerHTML = '<iconify-icon icon="lucide:menu"></iconify-icon>';
+                }
+            });
+        }
+
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power2.out" });
+        });
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px'; cursorOutline.style.height = '60px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+            });
+            target.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        gsap.from('.reveal-text', { y: 50, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.5 });
+        gsap.from('.reveal-img', { scale: 1.1, opacity: 0, duration: 1.5, ease: "power3.out", delay: 0.8 });
+        gsap.to('#journey-img', { y: 50, ease: "none", scrollTrigger: { trigger: ".reveal-img", start: "top bottom", end: "bottom top", scrub: true } });
+
+        // Leaflet Map Initialization
+        setTimeout(() => {
+            if (document.getElementById('map')) {
+                const map = L.map('map', { scrollWheelZoom: false }).setView([24.0, 50.0], 5);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }).addTo(map);
+
+                const locations = [
+                    { day: "第 01-03 天", name: "利雅德", coords: [24.7136, 46.6753] },
+                    { day: "第 04 天-07", name: "埃爾奧拉 (AlUla)", coords: [26.6044, 37.9268] },
+                    { day: "第 08 天-11", name: "杜拜 與 阿布達比", coords: [25.2048, 55.2708] },
+                    { day: "第 12 天-16", name: "馬斯喀特 與 綠山 (Jabal Akhdar)", coords: [23.0761, 57.6710] },
+                    { day: "第 17-21 天", name: "塞拉萊", coords: [17.0151, 54.0924] }
+                ];
+
+                const pathCoords = locations.map(loc => loc.coords);
+                L.polyline(pathCoords, { color: '#C5A059', weight: 2, opacity: 0.5, dashArray: '5, 10' }).addTo(map);
+
+                locations.forEach(loc => {
+                    const marker = L.circleMarker(loc.coords, {
+                        color: '#C5A059', fillColor: '#C5A059', fillOpacity: 0.8, radius: 6
+                    }).addTo(map);
+                    marker.bindPopup(`<div class="text-center p-1"><strong class="text-black font-serif text-sm">${loc.day}</strong><br><span class="text-gray-600 text-xs">${loc.name}</span></div>`);
+                });
+            }
+        }, 1000);
+
+        // Lightbox Modal Setup
+        const lightbox = document.createElement('div');
+        lightbox.id = 'lightbox';
+        lightbox.className = 'fixed inset-0 z-[100] bg-black/25 hidden flex-col items-center justify-center opacity-0 backdrop-blur-[1px]';
+        lightbox.innerHTML = `
+            <button id="lightbox-close" class="absolute top-6 right-6 md:top-8 md:right-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 rounded-full backdrop-blur-sm">
+                <iconify-icon icon="lucide:x" width="24"></iconify-icon>
+            </button>
+            <div class="relative flex flex-col items-center justify-center w-full max-w-7xl px-12 md:px-20 max-h-[85vh]">
+                <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-2xl m-auto" alt="Gallery Image">
+                <button id="lightbox-prev" class="absolute left-2 md:left-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-sm">
+                    <iconify-icon icon="lucide:chevron-left" width="32"></iconify-icon>
+                </button>
+                <button id="lightbox-next" class="absolute right-2 md:right-8 text-white/70 hover:text-[#C5A059] transition-colors z-50 bg-black/20 hover:bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-sm">
+                    <iconify-icon icon="lucide:chevron-right" width="32"></iconify-icon>
+                </button>
+            </div>
+            <div id="lightbox-indicators" class="flex items-center justify-center gap-[20px] mt-4 z-50 w-full"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lbImg = document.getElementById('lightbox-img');
+        const lbPrev = document.getElementById('lightbox-prev');
+        const lbNext = document.getElementById('lightbox-next');
+        const lbClose = document.getElementById('lightbox-close');
+        const lbIndicators = document.getElementById('lightbox-indicators');
+
+        let currentImages = [];
+        let currentIndex = 0;
+
+        function updateLightbox() {
+            gsap.to(lbImg, {
+                opacity: 0, duration: 0.2, onComplete: () => {
+                    lbImg.src = currentImages[currentIndex];
+                    gsap.to(lbImg, { opacity: 1, duration: 0.3 });
+                }
+            });
+
+            lbIndicators.innerHTML = currentImages.map((_, i) =>
+                `<button class="w-2 h-2 rounded-full transition-colors ${i === currentIndex ? 'bg-[#C5A059]' : 'bg-white/20'}" onclick="goToImage(${i})"></button>`
+            ).join('');
+
+            setTimeout(() => {
+                document.querySelectorAll('#lightbox-indicators button').forEach(btn => {
+                    btn.addEventListener('mouseenter', () => {
+                        cursorOutline.style.width = '50px'; cursorOutline.style.height = '50px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.2)';
+                    });
+                    btn.addEventListener('mouseleave', () => {
+                        cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+                    });
+                });
+            }, 50);
+        }
+
+        window.goToImage = (index) => {
+            currentIndex = index;
+            updateLightbox();
+        };
+
+        [lbPrev, lbNext, lbClose].forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px'; cursorOutline.style.height = '60px'; cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        lbPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+            updateLightbox();
+        });
+
+        lbNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % currentImages.length;
+            updateLightbox();
+        });
+
+        lbClose.addEventListener('click', () => {
+            gsap.to(lightbox, { opacity: 0, duration: 0.4, onComplete: () => lightbox.classList.add('hidden') });
+        });
+
+        // Click Gallery Initialization
+        document.querySelectorAll('.gallery-container').forEach(container => {
+            const images = Array.from(container.querySelectorAll('img'));
+            if (images.length === 0) return;
+
+            images.forEach((img, i) => {
+                if (i !== 0) gsap.set(img, { opacity: 0 });
+            });
+
+            container.addEventListener('mouseenter', () => {
+                gsap.to(images[0], { scale: 1.05, duration: 0.7, ease: "power2.out" });
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+                gsap.to(images[0], { filter: 'brightness(0.7)', duration: 0.3 });
+
+                if (!container.querySelector('.expand-icon')) {
+                    const icon = document.createElement('div');
+                    icon.className = 'expand-icon absolute inset-0 flex items-center justify-center opacity-0 z-10 pointer-events-none';
+                    icon.innerHTML = '<iconify-icon icon="lucide:expand" class="text-white text-3xl drop-shadow-lg"></iconify-icon>';
+                    container.appendChild(icon);
+                    gsap.to(icon, { opacity: 1, duration: 0.3 });
+                } else {
+                    gsap.to(container.querySelector('.expand-icon'), { opacity: 1, duration: 0.3 });
+                }
+            });
+
+            container.addEventListener('mouseleave', () => {
+                gsap.to(images[0], { scale: 1, duration: 0.7, ease: "power2.out" });
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.backgroundColor = 'transparent';
+                gsap.to(images[0], { filter: 'brightness(1)', duration: 0.3 });
+                if (container.querySelector('.expand-icon')) {
+                    gsap.to(container.querySelector('.expand-icon'), { opacity: 0, duration: 0.3 });
+                }
+            });
+
+            container.addEventListener('click', () => {
+                currentImages = images.map(img => img.src);
+                currentIndex = 0;
+                lbImg.src = currentImages[currentIndex];
+                updateLightbox();
+                lightbox.classList.remove('hidden');
+                gsap.to(lightbox, { opacity: 1, duration: 0.4 });
+            });
+        });
+    </script>
+</body>
+
+</html>
