@@ -44,7 +44,12 @@ const SECTIONS = {
     journeys: {
         label: 'Journeys',
         desc:  'The three curated journey packages (durations, titles, descriptions)',
-        filter: item => item.key.startsWith('journey')
+        filter: item => item.key.startsWith('journey') && !['dubai','liwa','empty_quarter','bedouin','abu_dhabi','louvre','mosque','departure','musandam','nizwa','wahiba','riyadh','alula','oman_mt','salalah'].some(p => item.key.startsWith(p))
+    },
+    journey_detail: {
+        label: 'Journey Day Images',
+        desc:  'Day-by-day itinerary photos shown in the lightbox on each journey page',
+        filter: item => ['dubai','liwa','empty_quarter','bedouin','abu_dhabi','louvre','mosque','departure','musandam','nizwa','wahiba','riyadh','alula','oman_mt','salalah'].some(p => item.key.startsWith(p))
     },
     values: {
         label: 'Core Values',
@@ -69,15 +74,16 @@ const SECTIONS = {
 };
 
 // Order for "All Content" grouped view
-const GROUP_ORDER = ['hero', 'journeys', 'values', 'concierge', 'footer', 'images'];
+const GROUP_ORDER = ['hero', 'journeys', 'journey_detail', 'values', 'concierge', 'footer', 'images'];
 
 const GROUP_ICONS = {
-    hero:      '🌟',
-    journeys:  '🗺',
-    values:    '✨',
-    concierge: '📞',
-    footer:    '📄',
-    images:    '🖼'
+    hero:           '🌟',
+    journeys:       '🗺',
+    journey_detail: '📸',
+    values:         '✨',
+    concierge:      '📞',
+    footer:         '📄',
+    images:         '🖼'
 };
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
