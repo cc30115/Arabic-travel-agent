@@ -12,6 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
+    <script src="image-links.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -159,6 +160,13 @@
             Us</a>
         <a href="contact.html"
             class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Contact Us</a>
+
+        <!-- Language Switcher -->
+        <div id="mobile-lang" class="mt-8 flex gap-6 text-xl tracking-widest uppercase items-center border-t border-white/20 pt-8 w-[80%] justify-center">
+            <a href="journey-3.html" class="text-gold">EN</a>
+            <span class="text-white/20">|</span>
+            <a href="journey-3-zh.html" class="text-white/50 hover:text-gold transition-colors">中文</a>
+        </div>
     </div>
 
     <!-- Journey Hero -->
@@ -175,7 +183,7 @@
 
         <div class="relative w-full h-[500px] md:h-[75vh] overflow-hidden reveal-img mb-20"><img
                 src="asset/40301ed4c72e4eae80b704b36d5d0a79.jpg" class="w-full h-full object-cover object-bottom"
-                alt="The Grand Arabian Odyssey" referrerPolicy="no-referrer" id="journey-img"></div>
+                alt="The Grand Arabian Odyssey" referrerPolicy="no-referrer" id="journey-img" data-asset="journey_3"></div>
 
         <div class="px-6 md:px-20 max-w-7xl mx-auto w-full">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
@@ -290,13 +298,13 @@
                     <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
                         <img src="https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 1"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="riyadh_1">
                         <img src="https://images.unsplash.com/photo-1622214648710-5309d43d0e98?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 2"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="riyadh_2">
                         <img src="https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Riyadh 3"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="riyadh_3">
                     </div>
                 </div>
 
@@ -327,13 +335,13 @@
                     <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
                         <img src="https://images.unsplash.com/photo-1643101808488-821245009a25?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="AlUla 1"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="alula_1">
                         <img src="https://images.unsplash.com/photo-1610555356070-d1fb3d9fb5ee?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="AlUla 2"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="alula_2">
                         <img src="https://images.unsplash.com/photo-1643101809204-712341857945?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="AlUla 3"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="alula_3">
                     </div>
                 </div>
 
@@ -363,13 +371,13 @@
                     <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
                         <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Dubai 1"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="dubai_1">
                         <img src="https://images.unsplash.com/photo-1582672060624-cb87e076644f?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Dubai 2"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="dubai_2">
                         <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Dubai 3"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="dubai_3">
                     </div>
                 </div>
 
@@ -400,13 +408,13 @@
                     <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
                         <img src="https://images.unsplash.com/photo-1542052125323-e69ad37a47c2?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 1"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="oman_mt_1">
                         <img src="https://images.unsplash.com/photo-1621251918451-2e6e3f5d5225?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 2"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="oman_mt_2">
                         <img src="https://images.unsplash.com/photo-1560613271-88f572412e8b?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Oman Mountains 3"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="oman_mt_3">
                     </div>
                 </div>
 
@@ -437,13 +445,13 @@
                     <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
                         <img src="https://images.unsplash.com/photo-1528287942171-fbe365d1d9cb?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Salalah 1"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="salalah_1">
                         <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Salalah 2"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="salalah_2">
                         <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=800&auto=format&fit=crop"
                             class="absolute inset-0 w-full h-full object-cover" alt="Salalah 3"
-                            referrerPolicy="no-referrer">
+                            referrerPolicy="no-referrer" data-asset="salalah_3">
                     </div>
                 </div>
             </div>

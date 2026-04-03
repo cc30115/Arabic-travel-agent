@@ -12,6 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
+    <script src="image-links.js"></script>
     <style>
         :root {
             --sand: #E8DCC4;
@@ -265,6 +266,13 @@
             Us</a>
         <a href="contact.html"
             class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Contact Us</a>
+
+        <!-- Language Switcher -->
+        <div id="mobile-lang" class="mt-8 flex gap-6 text-xl tracking-widest uppercase items-center border-t border-white/20 pt-8 w-[80%] justify-center">
+            <a href="index.html" class="text-gold">EN</a>
+            <span class="text-white/20">|</span>
+            <a href="index-zh.html" class="text-white/50 hover:text-gold transition-colors">中文</a>
+        </div>
     </div>
 
     <!-- Hero Section -->
@@ -273,7 +281,7 @@
         <div class="absolute inset-0 z-0 overflow-hidden" id="hero-bg">
             <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=2500&auto=format&fit=crop"
                 class="w-full h-full object-cover origin-center" alt="Desert Landscape" referrerPolicy="no-referrer"
-                id="hero-img">
+                id="hero-img" data-asset="hero_bg">
             <div class="absolute inset-0 bg-black/40"></div>
         </div>
 
@@ -325,7 +333,7 @@
                         class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
                         <img src="https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                            alt="7 Days Journey" referrerPolicy="no-referrer">
+                            alt="7 Days Journey" referrerPolicy="no-referrer" data-asset="journey_1">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -356,7 +364,7 @@
                         class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
                         <img src="asset/199b165ae84ce4330562a6b64dc6d35f.jpg"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                            alt="14 Days Journey" referrerPolicy="no-referrer">
+                            alt="14 Days Journey" referrerPolicy="no-referrer" data-asset="journey_2">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -389,7 +397,7 @@
                         class="w-full md:w-3/5 h-[400px] md:h-[600px] overflow-hidden rounded-2xl relative block hover-target cursor-none">
                         <img src="asset/40301ed4c72e4eae80b704b36d5d0a79.jpg"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                            alt="21 Days Journey" referrerPolicy="no-referrer">
+                            alt="21 Days Journey" referrerPolicy="no-referrer" data-asset="journey_3">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -438,7 +446,7 @@
                     <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
                         <img src="https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?q=80&w=1000&auto=format&fit=crop"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                            alt="Culture" referrerPolicy="no-referrer">
+                            alt="Culture" referrerPolicy="no-referrer" data-asset="value_1">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -457,7 +465,7 @@
                     <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
                         <img src="https://images.unsplash.com/photo-1528287942171-fbe365d1d9cb?q=80&w=1000&auto=format&fit=crop"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                            alt="Luxury" referrerPolicy="no-referrer">
+                            alt="Luxury" referrerPolicy="no-referrer" data-asset="value_2">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -476,7 +484,7 @@
                     <div class="overflow-hidden rounded-2xl mb-6 h-[400px] relative">
                         <img src="https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=1000&auto=format&fit=crop"
                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                            alt="Serenity" referrerPolicy="no-referrer">
+                            alt="Serenity" referrerPolicy="no-referrer" data-asset="value_3">
                         <div
                             class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500">
                         </div>
@@ -525,7 +533,7 @@
     <section id="concierge" class="py-32 px-6 relative overflow-hidden flex items-center justify-center min-h-[80vh]">
         <div class="absolute inset-0 z-0 opacity-40">
             <img src="https://images.unsplash.com/photo-1541785501309-c12d4d98a9d1?q=80&w=2500&auto=format&fit=crop"
-                class="w-full h-full object-cover" alt="Luxury Desert Setting" referrerPolicy="no-referrer">
+                class="w-full h-full object-cover" alt="Luxury Desert Setting" referrerPolicy="no-referrer" data-asset="concierge_bg">
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-[#0A0A0A]"></div>
         </div>
 

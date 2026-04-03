@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="image-links.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -63,6 +64,13 @@
         <a href="index-zh.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">首頁</a>
         <a href="about-zh.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">關於我們</a>
         <a href="contact-zh.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">聯絡我們</a>
+
+        <!-- Language Switcher -->
+        <div id="mobile-lang" class="mt-8 flex gap-6 text-xl tracking-widest uppercase items-center border-t border-white/20 pt-8 w-[80%] justify-center">
+            <a href="journey-1.html" class="text-white/50 hover:text-gold transition-colors">EN</a>
+            <span class="text-white/20">|</span>
+            <a href="journey-1-zh.html" class="text-gold">中文</a>
+        </div>
     </div>
 
     <!-- Journey Hero -->
@@ -72,7 +80,7 @@
         </div>
         <h1 class="text-5xl md:text-8xl serif mb-16 reveal-text leading-tight">The Empty Quarter <br><span class="text-gold italic text-4xl md:text-6xl">Escape</span><br><span class="text-2xl md:text-3xl text-white/50 block mt-4 font-sans tracking-widest">沙丘謐境逃逸之旅</span></h1></div>
         
-        <div class="relative w-full h-[500px] md:h-[75vh] overflow-hidden reveal-img mb-20"><img src="https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg" class="w-full h-full object-cover object-bottom"  alt="The Empty Quarter" referrerPolicy="no-referrer"  id="journey-img"></div>
+        <div class="relative w-full h-[500px] md:h-[75vh] overflow-hidden reveal-img mb-20"><img src="https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg" class="w-full h-full object-cover object-bottom"  alt="The Empty Quarter" referrerPolicy="no-referrer"  id="journey-img" data-asset="journey_1"></div>
 
         <div class="px-6 md:px-20 max-w-7xl mx-auto w-full"><div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
             <div class="md:col-span-8 space-y-12 text-white/70 leading-relaxed text-sm md:text-base reveal-text">
@@ -167,9 +175,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1582672060624-cb87e076644f?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 1" referrerPolicy="no-referrer" data-asset="dubai_1">
+                    <img src="https://images.unsplash.com/photo-1582672060624-cb87e076644f?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 2" referrerPolicy="no-referrer" data-asset="dubai_2">
+                    <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Dubai 3" referrerPolicy="no-referrer" data-asset="dubai_3">
                 </div>
             </div>
 
@@ -193,9 +201,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1542401886-65d6c61db217?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 1" referrerPolicy="no-referrer" data-asset="liwa_1">
+                    <img src="https://images.unsplash.com/photo-1542401886-65d6c61db217?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 2" referrerPolicy="no-referrer" data-asset="liwa_2">
+                    <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Liwa 3" referrerPolicy="no-referrer" data-asset="liwa_3">
                 </div>
             </div>
 
@@ -219,9 +227,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1545893835-abaa50cbe628?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 1" referrerPolicy="no-referrer" data-asset="empty_quarter_1">
+                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 2" referrerPolicy="no-referrer" data-asset="empty_quarter_2">
+                    <img src="https://images.unsplash.com/photo-1545893835-abaa50cbe628?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Empty Quarter 3" referrerPolicy="no-referrer" data-asset="empty_quarter_3">
                 </div>
             </div>
 
@@ -242,9 +250,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1502049534556-94e823f95e31?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1489493173507-6feea31f12ff?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 1" referrerPolicy="no-referrer" data-asset="bedouin_1">
+                    <img src="https://images.unsplash.com/photo-1502049534556-94e823f95e31?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 2" referrerPolicy="no-referrer" data-asset="bedouin_2">
+                    <img src="https://images.unsplash.com/photo-1489493173507-6feea31f12ff?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Bedouin 3" referrerPolicy="no-referrer" data-asset="bedouin_3">
                 </div>
             </div>
 
@@ -266,9 +274,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1551043047-1d2adf00f3fd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1580674684081-776742d40003?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 1" referrerPolicy="no-referrer" data-asset="abu_dhabi_1">
+                    <img src="https://images.unsplash.com/photo-1551043047-1d2adf00f3fd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 2" referrerPolicy="no-referrer" data-asset="abu_dhabi_2">
+                    <img src="https://images.unsplash.com/photo-1580674684081-776742d40003?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Abu Dhabi 3" referrerPolicy="no-referrer" data-asset="abu_dhabi_3">
                 </div>
             </div>
 
@@ -288,9 +296,9 @@
                     </ul>
                 </div>
                 <div class="md:w-1/4 h-40 rounded-xl overflow-hidden relative gallery-container cursor-none">
-                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 1" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1556388158-158ea5ccacbd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 2" referrerPolicy="no-referrer">
-                    <img src="https://images.unsplash.com/photo-1569154941061-e231b4732ef1?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 3" referrerPolicy="no-referrer">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 1" referrerPolicy="no-referrer" data-asset="departure_1">
+                    <img src="https://images.unsplash.com/photo-1556388158-158ea5ccacbd?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 2" referrerPolicy="no-referrer" data-asset="departure_2">
+                    <img src="https://images.unsplash.com/photo-1569154941061-e231b4732ef1?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Departure 3" referrerPolicy="no-referrer" data-asset="departure_3">
                 </div>
             </div>
         </div>
