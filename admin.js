@@ -242,6 +242,17 @@ function renderImageGrid(items) {
 }
 
 // ─── Templates ────────────────────────────────────────────────────────────────
+
+// Fix relative asset paths (e.g. "asset/foo.jpg" → "/asset/foo.jpg")
+// so they work both locally and on Vercel at any URL depth.
+function resolveImageSrc(src) {
+    if (!src) return '';
+    if (src.startsWith('http') || src.startsWith('//') || src.startsWith('data:') || src.startsWith('blob:')) {
+        return src;
+    }
+    return '/' + src.replace(/^\//, '');
+}
+
 function sectionHeader(icon, label, count) {
     return `
         <div class="flex items-center gap-2 mb-3">
@@ -263,7 +274,7 @@ function textRowHTML(item) {
         <div class="content-card flex items-center gap-4 px-5 py-3 border-b border-white/4 last:border-0" style="border-color:rgba(255,255,255,0.04)">
             <!-- Clickable thumbnail -->
             <div class="relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border border-white/10 cursor-pointer group edit-btn" data-id="${item.id}" title="Click to change image">
-                <img src="${item.value}" alt="${escapeHTML(item.description || item.key)}"
+                <img src="${resolveImageSrc(item.value)}" alt="${escapeHTML(item.description || item.key)}"
                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:10px;text-align:center;padding:4px\\'>No image</div>'">
                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -328,7 +339,7 @@ function imageCardHTML(item) {
     return `
         <div class="image-card bg-black border border-white/8 rounded-xl overflow-hidden cursor-pointer group" style="border-color:rgba(255,255,255,0.07)" data-id="${item.id}">
             <div class="relative h-36 bg-white/4 overflow-hidden">
-                <img src="${item.value}" alt="${escapeHTML(label)}"
+                <img src="${resolveImageSrc(item.value)}" alt="${escapeHTML(label)}"
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full\\' style=\\'color:rgba(255,255,255,0.2); font-size:11px;\\'>No image found</div>'">
                 <div class="absolute inset-0 bg-transparent group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -449,10 +460,17 @@ function closeModal() {
 }
 
 function updateImagePreview(type, url) {
-    if (type === 'image' && url && url.trim()) {
-        imagePreviewWrap.classList.remove('hidden');
-        imagePreview.src = url.trim();
+    const uploadWrap = document.getElementById('upload-wrap');
+    if (type === 'image') {
+        uploadWrap && uploadWrap.classList.remove('hidden');
+        if (url && url.trim()) {
+            imagePreviewWrap.classList.remove('hidden');
+            imagePreview.src = resolveImageSrc(url.trim());
+        } else {
+            imagePreviewWrap.classList.add('hidden');
+        }
     } else {
+        uploadWrap && uploadWrap.classList.add('hidden');
         imagePreviewWrap.classList.add('hidden');
     }
 }
@@ -460,6 +478,60 @@ function updateImagePreview(type, url) {
 // Live preview updates
 editTypeSelect.addEventListener('change', () => updateImagePreview(editTypeSelect.value, editValue.value));
 editValue.addEventListener('input',       () => updateImagePreview(editTypeSelect.value, editValue.value));
+
+// ─── File Upload ──────────────────────────────────────────────────────────────
+const imageFileInput  = document.getElementById('image-file-input');
+const uploadFileBtn   = document.getElementById('upload-file-btn');
+const uploadBtnLabel  = document.getElementById('upload-btn-label');
+
+// Clicking the upload button or the preview triggers the file picker
+uploadFileBtn && uploadFileBtn.addEventListener('click', () => imageFileInput && imageFileInput.click());
+imagePreviewWrap && imagePreviewWrap.addEventListener('click', () => imageFileInput && imageFileInput.click());
+
+imageFileInput && imageFileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Instant local preview while uploading
+    const blobUrl = URL.createObjectURL(file);
+    imagePreviewWrap.classList.remove('hidden');
+    imagePreview.src = blobUrl;
+
+    // Update button label to show progress
+    uploadBtnLabel.textContent = 'Uploading…';
+    uploadFileBtn.disabled = true;
+
+    try {
+        const publicUrl = await uploadImageFile(file);
+        editValue.value = publicUrl;
+        imagePreview.src = publicUrl;
+        URL.revokeObjectURL(blobUrl);
+        uploadBtnLabel.textContent = '✓ Uploaded Successfully';
+        setTimeout(() => { uploadBtnLabel.textContent = 'Upload from Computer'; }, 2500);
+    } catch (err) {
+        uploadBtnLabel.textContent = 'Upload Failed — Check Supabase Storage';
+        console.error('Upload error:', err);
+        // Keep the blob preview and leave the textarea empty so user can paste URL manually
+        setTimeout(() => { uploadBtnLabel.textContent = 'Upload from Computer'; }, 3000);
+    }
+
+    uploadFileBtn.disabled = false;
+    imageFileInput.value = '';
+});
+
+async function uploadImageFile(file) {
+    const ext      = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from('images').getPublicUrl(fileName);
+    return data.publicUrl;
+}
 
 addNewBtn.addEventListener('click',      () => openModal());
 closeModalBtn.addEventListener('click',  closeModal);
