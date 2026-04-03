@@ -30,6 +30,7 @@ export default defineConfig(({mode}) => {
           'journey-2-zh': path.resolve(__dirname, 'journey-2-zh.html'),
           'journey-3': path.resolve(__dirname, 'journey-3.html'),
           'journey-3-zh': path.resolve(__dirname, 'journey-3-zh.html'),
+          admin: path.resolve(__dirname, 'admin.html'),
         },
       },
     },
