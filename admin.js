@@ -154,7 +154,8 @@ document.querySelectorAll('.nav-item').forEach(btn => {
         const sec = SECTIONS[activeSection];
         sectionTitle.textContent = sec.label;
         sectionDesc.textContent  = sec.desc;
-        if (currentData.length > 0) renderSection();
+        const isSpecial = ['inquiries','availability'].includes(activeSection);
+        if (isSpecial || currentData.length > 0) renderSection();
     });
 });
 
@@ -167,6 +168,10 @@ function renderSection() {
         renderAllGrouped();
     } else if (activeSection === 'images') {
         renderImageGrid(currentData.filter(SECTIONS.images.filter));
+    } else if (activeSection === 'inquiries') {
+        renderInquiries();
+    } else if (activeSection === 'availability') {
+        renderAvailability();
     } else {
         renderFilteredList(currentData.filter(SECTIONS[activeSection].filter));
     }
@@ -574,5 +579,180 @@ editForm.addEventListener('submit', async (e) => {
     }
 });
 
+
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 init();
+
+// ─── Inquiries ────────────────────────────────────────────────────────────────
+async function renderInquiries() {
+    mainContent.classList.remove('hidden');
+    loadingState.classList.add('hidden');
+    mainContent.innerHTML = `<div class="py-16 text-center flex flex-col items-center gap-3 text-white/30">
+        <iconify-icon icon="lucide:loader-2" class="animate-spin text-3xl text-[#C5A059]"></iconify-icon>
+        <p class="text-[10px] tracking-widest uppercase">Loading Inquiries...</p></div>`;
+
+    const { data, error } = await supabase.from('inquiries').select('*').order('created_at', { ascending: false });
+    if (error) { mainContent.innerHTML = `<p class="text-red-400 text-sm p-6">Error: ${error.message}</p>`; return; }
+    if (!data.length) { mainContent.innerHTML = emptyState('No inquiries yet — submitted forms will appear here.'); return; }
+
+    mainContent.innerHTML = `<div class="space-y-3">${data.map(inqCardHTML).join('')}</div>`;
+
+    document.querySelectorAll('.inq-review-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            await supabase.from('inquiries').update({ status: 'reviewed' }).eq('id', btn.dataset.id);
+            renderInquiries();
+        });
+    });
+    document.querySelectorAll('.inq-delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (confirm('Delete this inquiry permanently?')) {
+                await supabase.from('inquiries').delete().eq('id', btn.dataset.id);
+                renderInquiries();
+            }
+        });
+    });
+}
+
+function inqCardHTML(inq) {
+    const submitted = new Date(inq.created_at).toLocaleDateString('en', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    const travelDate = inq.travel_date ? new Date(inq.travel_date + 'T00:00:00').toLocaleDateString('en', { month:'long', day:'numeric', year:'numeric' }) : '—';
+    const isNew = !inq.status || inq.status === 'new';
+    return `
+    <div class="bg-black border rounded-xl overflow-hidden" style="border-color:${isNew ? 'rgba(197,160,89,0.2)' : 'rgba(255,255,255,0.06)'}">
+        <div class="px-5 py-4 flex items-start gap-4">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span class="font-medium text-white text-sm">${escapeHTML(inq.name || '—')}</span>
+                    <span class="badge ${isNew ? 'bg-[#C5A059]/15 text-[#C5A059]' : 'bg-white/5 text-white/30'}">${isNew ? 'New' : 'Reviewed'}</span>
+                    ${inq.journey ? `<span class="badge lang-all">${escapeHTML(inq.journey)}</span>` : ''}
+                </div>
+                <div class="flex flex-wrap gap-4 text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                    <span><iconify-icon icon="lucide:mail" width="10"></iconify-icon> ${escapeHTML(inq.email || '')}</span>
+                    ${inq.phone ? `<span><iconify-icon icon="lucide:phone" width="10"></iconify-icon> ${escapeHTML(inq.phone)}</span>` : ''}
+                    <span><iconify-icon icon="lucide:calendar" width="10"></iconify-icon> ${escapeHTML(travelDate)}</span>
+                    ${inq.guests ? `<span><iconify-icon icon="lucide:users" width="10"></iconify-icon> ${inq.guests} guest${inq.guests > 1 ? 's' : ''}</span>` : ''}
+                </div>
+                ${inq.message ? `<p class="text-white/50 text-sm leading-relaxed line-clamp-2">${escapeHTML(inq.message)}</p>` : ''}
+                <p class="text-white/20 text-[10px] mt-2">${submitted}</p>
+            </div>
+            <div class="flex items-center gap-0.5 flex-shrink-0 pt-1">
+                ${isNew ? `<button class="inq-review-btn text-white/25 hover:text-green-400 transition-colors p-2 rounded-lg hover:bg-green-500/8" data-id="${inq.id}" title="Mark reviewed">
+                    <iconify-icon icon="lucide:check" width="14"></iconify-icon></button>` : ''}
+                <button class="inq-delete-btn text-white/25 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-red-500/8" data-id="${inq.id}" title="Delete">
+                    <iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ─── Availability Calendar ────────────────────────────────────────────────────
+let availYear  = new Date().getFullYear();
+let availMonth = new Date().getMonth();
+let availDates = {}; // { 'YYYY-MM-DD': { id, status } }
+
+async function renderAvailability() {
+    mainContent.classList.remove('hidden');
+    loadingState.classList.add('hidden');
+    mainContent.innerHTML = `<div class="py-16 text-center flex flex-col items-center gap-3 text-white/30">
+        <iconify-icon icon="lucide:loader-2" class="animate-spin text-3xl text-[#C5A059]"></iconify-icon>
+        <p class="text-[10px] tracking-widest uppercase">Loading Calendar...</p></div>`;
+
+    const { data, error } = await supabase.from('booking_dates').select('*');
+    if (error) { mainContent.innerHTML = `<p class="text-red-400 text-sm p-6">Error: ${error.message}</p>`; return; }
+    availDates = {};
+    (data || []).forEach(d => availDates[d.date] = { id: d.id, status: d.status });
+    drawAvailCalendar();
+}
+
+function drawAvailCalendar() {
+    const MONTHS_A = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const firstDay = new Date(availYear, availMonth, 1).getDay();
+    const days = new Date(availYear, availMonth + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    let cells = '';
+    for (let i = 0; i < firstDay; i++) cells += '<div></div>';
+    for (let d = 1; d <= days; d++) {
+        const ds = `${availYear}-${String(availMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isPast = new Date(availYear, availMonth, d) < today;
+        const isToday = new Date(availYear, availMonth, d).toDateString() === today.toDateString();
+        const entry = availDates[ds];
+        let bg = 'bg-white/5 hover:bg-white/10 text-white/60 cursor-pointer';
+        let sub = '';
+        if (isPast) { bg = 'text-white/10 cursor-default'; }
+        else if (entry?.status === 'blocked') { bg = 'bg-red-500/15 hover:bg-red-500/25 text-red-300 cursor-pointer'; sub = '<div class="text-[7px] leading-none mt-0.5 text-red-400/60">blocked</div>'; }
+        else if (entry?.status === 'open')    { bg = 'bg-[#C5A059]/15 hover:bg-[#C5A059]/25 text-[#C5A059] cursor-pointer'; sub = '<div class="text-[7px] leading-none mt-0.5 text-[#C5A059]/60">open</div>'; }
+        const ring = isToday ? 'ring-1 ring-[#C5A059]/40' : '';
+        cells += `<div class="avail-cell flex flex-col items-center justify-center rounded-xl text-xs ${bg} ${ring} transition-colors aspect-square select-none"
+            ${isPast ? '' : `data-d="${ds}"`}>${d}${sub}</div>`;
+    }
+
+    const managed = Object.entries(availDates)
+        .filter(([d]) => d >= today.toISOString().split('T')[0])
+        .sort(([a],[b]) => a.localeCompare(b));
+
+    const managedHTML = managed.length
+        ? managed.map(([d, e]) => `
+        <div class="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0">
+            <div class="flex items-center gap-2.5">
+                <span class="badge ${e.status === 'blocked' ? 'bg-red-500/15 text-red-400' : 'bg-[#C5A059]/15 text-[#C5A059]'}">${e.status}</span>
+                <span class="text-sm text-white/65">${new Date(d + 'T00:00:00').toLocaleDateString('en', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}</span>
+            </div>
+            <button class="rm-avail text-white/20 hover:text-red-400 p-1 transition-colors" data-id="${e.id}" data-date="${d}">
+                <iconify-icon icon="lucide:x" width="12"></iconify-icon></button>
+        </div>`).join('')
+        : '<p class="text-white/25 text-xs py-4 text-center">No dates managed yet.</p>';
+
+    mainContent.innerHTML = `
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 bg-black border border-white/7 rounded-2xl p-6" style="border-color:rgba(255,255,255,0.07)">
+            <div class="flex items-center justify-between mb-5">
+                <button id="ap" class="text-white/30 hover:text-[#C5A059] p-2 rounded-lg hover:bg-white/5 transition-colors"><iconify-icon icon="lucide:chevron-left" width="18"></iconify-icon></button>
+                <span class="text-sm tracking-[0.15em] uppercase text-white">${MONTHS_A[availMonth]} ${availYear}</span>
+                <button id="an" class="text-white/30 hover:text-[#C5A059] p-2 rounded-lg hover:bg-white/5 transition-colors"><iconify-icon icon="lucide:chevron-right" width="18"></iconify-icon></button>
+            </div>
+            <div class="grid grid-cols-7 mb-2">
+                ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(h=>`<div class="text-center text-[9px] tracking-widest uppercase text-white/20 pb-2">${h}</div>`).join('')}
+            </div>
+            <div class="grid grid-cols-7 gap-1.5">${cells}</div>
+            <div class="flex flex-wrap gap-4 mt-5 pt-4 border-t border-white/5 text-[9px] tracking-widest uppercase text-white/25">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/20"></span> Click to Block</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500/40"></span> Blocked → Promote</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#C5A059]/40"></span> Promoted → Remove</span>
+            </div>
+        </div>
+        <div class="bg-black border border-white/7 rounded-2xl p-5" style="border-color:rgba(255,255,255,0.07)">
+            <p class="text-[10px] uppercase tracking-widest text-white/30 mb-4">Managed Dates</p>
+            ${managedHTML}
+        </div>
+    </div>`;
+
+    document.getElementById('ap').addEventListener('click', () => { availMonth--; if (availMonth<0){availMonth=11;availYear--;} drawAvailCalendar(); });
+    document.getElementById('an').addEventListener('click', () => { availMonth++; if (availMonth>11){availMonth=0;availYear++;} drawAvailCalendar(); });
+
+    document.querySelectorAll('.avail-cell[data-d]').forEach(cell => {
+        cell.addEventListener('click', () => toggleAvailDate(cell.dataset.d));
+    });
+    document.querySelectorAll('.rm-avail').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            await supabase.from('booking_dates').delete().eq('id', btn.dataset.id);
+            delete availDates[btn.dataset.date];
+            drawAvailCalendar();
+        });
+    });
+}
+
+async function toggleAvailDate(ds) {
+    const entry = availDates[ds];
+    if (!entry) {
+        const { data, error } = await supabase.from('booking_dates').insert([{ date: ds, status: 'blocked' }]).select().single();
+        if (!error && data) availDates[ds] = { id: data.id, status: 'blocked' };
+    } else if (entry.status === 'blocked') {
+        await supabase.from('booking_dates').update({ status: 'open' }).eq('id', entry.id);
+        availDates[ds].status = 'open';
+    } else {
+        await supabase.from('booking_dates').delete().eq('id', entry.id);
+        delete availDates[ds];
+    }
+    drawAvailCalendar();
+}

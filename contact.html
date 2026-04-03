@@ -6,64 +6,30 @@
     <title>Contact Us | Khaymah - Luxury Arabian Journeys</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <script src="image-links.js"></script>
     <style>
-        :root {
-            --sand: #E8DCC4;
-            --dark: #0A0A0A;
-            --gold: #C5A059;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--dark);
-            color: var(--sand);
-            overflow-x: hidden;
-            cursor: none;
-        }
-        h1, h2, h3, .serif {
-            font-family: 'Playfair Display', serif;
-        }
-        .noise {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.03;
-            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-        }
-        .cursor-dot, .cursor-outline {
-            position: fixed;
-            top: 0; left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 10000;
-            pointer-events: none;
-        }
-        .cursor-dot {
-            width: 8px; height: 8px;
-            background-color: var(--gold);
-        }
-        .cursor-outline {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(197, 160, 89, 0.5);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        .grid-lines {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            display: flex; justify-content: space-between;
-            pointer-events: none; z-index: -1;
-            padding: 0 5vw;
-        }
-        .grid-line {
-            width: 1px; height: 100%;
-            background-color: rgba(232, 220, 196, 0.05);
-        }
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .border-gold { border-color: var(--gold); }
+        :root { --sand: #E8DCC4; --dark: #0A0A0A; --gold: #C5A059; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: var(--sand); overflow-x: hidden; cursor: none; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.03; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
+        .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 10000; pointer-events: none; }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--gold); }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(197,160,89,0.5); transition: width 0.2s, height 0.2s, background-color 0.2s; }
+        .grid-lines { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: space-between; pointer-events: none; z-index: -1; padding: 0 5vw; }
+        .grid-line { width: 1px; height: 100%; background-color: rgba(232,220,196,0.05); }
+        .text-gold { color: var(--gold); } .bg-gold { background-color: var(--gold); } .border-gold { border-color: var(--gold); }
+
+        /* ── Calendar Styles ── */
+        .cal-hdr { text-align:center; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.2); padding:6px 0; }
+        .cal-cell { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:50%; font-size:12px; cursor:pointer; transition:all 0.15s; }
+        .cal-cell.today { box-shadow:0 0 0 1px rgba(197,160,89,0.4); }
+        .cal-cell.past,.cal-cell.empty { color:rgba(255,255,255,0.1); pointer-events:none; cursor:not-allowed; }
+        .cal-cell.blocked { color:rgba(255,255,255,0.15); background:rgba(239,68,68,0.07); pointer-events:none; cursor:not-allowed; text-decoration:line-through; }
+        .cal-cell.open { background:rgba(197,160,89,0.15); color:#C5A059; }
+        .cal-cell.selected { background:#C5A059 !important; color:black !important; font-weight:600; }
+        .cal-cell:not(.past):not(.blocked):not(.empty):hover { background:rgba(255,255,255,0.07); }
+        select option { background:#111; color:#E8DCC4; }
     </style>
 </head>
 <body class="antialiased selection:bg-[#C5A059] selection:text-white opacity-0" id="page-body">
@@ -71,14 +37,7 @@
     <div class="noise"></div>
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
-
-    <div class="grid-lines">
-        <div class="grid-line"></div>
-        <div class="grid-line"></div>
-        <div class="grid-line"></div>
-        <div class="grid-line"></div>
-        <div class="grid-line"></div>
-    </div>
+    <div class="grid-lines"><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div></div>
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference">
@@ -87,11 +46,9 @@
             <a href="index.html" class="hover:text-gold transition-colors hover-target">Home</a>
             <a href="about.html" class="hover:text-gold transition-colors hover-target">About Us</a>
             <a href="contact.html" class="hover:text-gold transition-colors hover-target">Contact Us</a>
-            <!-- Language Selector -->
             <div class="relative group ml-4 pl-4 border-l border-white/20">
                 <button class="flex items-center gap-2 hover:text-gold transition-colors hover-target uppercase">
-                    <iconify-icon icon="lucide:globe" width="18"></iconify-icon>
-                    EN
+                    <iconify-icon icon="lucide:globe" width="18"></iconify-icon> EN
                 </button>
                 <div class="absolute right-0 top-full pt-6 w-32 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto translate-y-2 group-hover:translate-y-0">
                     <div class="bg-[#0A0A0A] border border-white/10 rounded-lg overflow-hidden">
@@ -100,21 +57,15 @@
                     </div>
                 </div>
             </div>
-
         </div>
-        <button id="menu-btn" class="md:hidden text-2xl hover-target relative z-50">
-            <iconify-icon icon="lucide:menu"></iconify-icon>
-        </button>
+        <button id="menu-btn" class="md:hidden text-2xl hover-target relative z-50"><iconify-icon icon="lucide:menu"></iconify-icon></button>
     </nav>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-500">
         <a href="index.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Home</a>
         <a href="about.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">About Us</a>
         <a href="contact.html" class="text-2xl serif tracking-widest uppercase hover:text-gold transition-colors">Contact Us</a>
-
-        <!-- Language Switcher -->
-        <div id="mobile-lang" class="mt-8 flex gap-6 text-xl tracking-widest uppercase items-center border-t border-white/20 pt-8 w-[80%] justify-center">
+        <div class="mt-8 flex gap-6 text-xl tracking-widest uppercase items-center border-t border-white/20 pt-8 w-[80%] justify-center">
             <a href="contact.html" class="text-gold">EN</a>
             <span class="text-white/20">|</span>
             <a href="contact-zh.html" class="text-white/50 hover:text-gold transition-colors">中文</a>
@@ -125,41 +76,106 @@
     <section class="pt-40 pb-20 px-6 md:px-20 max-w-7xl mx-auto min-h-screen flex flex-col justify-center relative z-10">
         <h1 class="text-5xl md:text-8xl serif mb-16 reveal-text">Contact Us <br><span class="text-gold italic text-4xl md:text-6xl">تواصل معنا</span></h1>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20">
+
+            <!-- Left info -->
             <div class="space-y-12 reveal-text">
-                <p class="text-white/70 leading-relaxed text-sm md:text-base">Begin your journey into the heart of Arabia. Reach out to our concierge team to tailor your exclusive experience, from private desert camps to curated cultural expeditions.</p>
-                
+                <p class="text-white/70 leading-relaxed text-sm md:text-base">Begin your journey into the heart of Arabia. Reach out to our concierge team to tailor your exclusive experience.</p>
                 <div>
                     <h3 class="text-gold serif text-2xl mb-3">Reservations</h3>
                     <p class="text-white/70 text-sm leading-relaxed">reserve@khaymah.com<br>+971 4 123 4567</p>
                 </div>
-                
                 <div>
                     <h3 class="text-gold serif text-2xl mb-3">Headquarters</h3>
                     <p class="text-white/70 text-sm leading-relaxed">The Khaymah Pavilion<br>Dubai Desert Conservation Reserve<br>United Arab Emirates</p>
                 </div>
             </div>
-            
-            <form class="space-y-8 reveal-text bg-white/5 p-8 md:p-10 rounded-2xl backdrop-blur-sm border border-white/10">
-                <div>
-                    <input type="text" placeholder="Your Name" class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 hover-target text-sm">
+
+            <!-- Right: Form -->
+            <div class="reveal-text">
+                <!-- Contact Form -->
+                <form id="contact-form" class="space-y-7 bg-white/5 p-8 md:p-10 rounded-2xl backdrop-blur-sm border border-white/10">
+                    <div>
+                        <input type="text" id="inp-name" placeholder="Your Name" required
+                            class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 text-sm">
+                    </div>
+                    <div>
+                        <input type="email" id="inp-email" placeholder="Email Address" required
+                            class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 text-sm">
+                    </div>
+                    <div>
+                        <input type="tel" id="inp-phone" placeholder="Phone / WhatsApp (optional)"
+                            class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <select id="inp-journey" class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white/60 text-sm appearance-none">
+                                <option value="">Journey Interest</option>
+                                <option value="J1 – Empty Quarter Escape (7 Days)">J1 – Empty Quarter (7D)</option>
+                                <option value="J2 – Bedouin Heritage Trail (14 Days)">J2 – Bedouin Heritage (14D)</option>
+                                <option value="J3 – Grand Arabian Odyssey (21 Days)">J3 – Grand Odyssey (21D)</option>
+                                <option value="Custom Journey">Custom Journey</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="number" id="inp-guests" placeholder="No. of Guests" min="1" max="30"
+                                class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Calendar Date Picker -->
+                    <div class="relative">
+                        <div id="date-trigger" class="cursor-pointer border-b border-white/20 py-3 flex items-center justify-between hover:border-gold transition-colors group">
+                            <span id="selected-date-text" class="text-white/30 text-sm">Preferred Travel Date — click to open calendar</span>
+                            <iconify-icon icon="lucide:calendar" class="text-gold flex-shrink-0 group-hover:scale-110 transition-transform"></iconify-icon>
+                        </div>
+                        <input type="hidden" id="inp-date">
+
+                        <!-- Calendar popup -->
+                        <div id="cal-popup" class="mt-2 hidden bg-[#0D0D0D] border border-white/10 rounded-2xl p-5 shadow-2xl z-10">
+                            <div class="flex items-center justify-between mb-5">
+                                <button type="button" id="cal-prev" class="text-white/30 hover:text-gold p-2 rounded-lg hover:bg-white/5 transition-colors">
+                                    <iconify-icon icon="lucide:chevron-left" width="18"></iconify-icon>
+                                </button>
+                                <span id="cal-month-label" class="text-xs tracking-[0.15em] uppercase text-white"></span>
+                                <button type="button" id="cal-next" class="text-white/30 hover:text-gold p-2 rounded-lg hover:bg-white/5 transition-colors">
+                                    <iconify-icon icon="lucide:chevron-right" width="18"></iconify-icon>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-7">
+                                <div class="cal-hdr">Su</div><div class="cal-hdr">Mo</div><div class="cal-hdr">Tu</div>
+                                <div class="cal-hdr">We</div><div class="cal-hdr">Th</div><div class="cal-hdr">Fr</div><div class="cal-hdr">Sa</div>
+                            </div>
+                            <div id="cal-grid" class="grid grid-cols-7 gap-1 mt-1"></div>
+                            <div class="flex flex-wrap gap-4 mt-4 pt-3 border-t border-white/8 text-[9px] tracking-widest uppercase text-white/25">
+                                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-white/25"></span> Available</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#C5A059]/50"></span> Promoted</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500/40"></span> Unavailable</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <textarea id="inp-message" placeholder="Tell us about your dream journey..." rows="4"
+                            class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 resize-none text-sm"></textarea>
+                    </div>
+
+                    <div id="form-error" class="hidden text-red-400 text-xs bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg"></div>
+
+                    <button type="submit" id="submit-btn" class="group relative inline-flex items-center justify-center px-8 py-4 border border-gold/50 bg-black/20 hover:bg-gold hover:text-black transition-all duration-500 overflow-hidden rounded-full w-full md:w-auto">
+                        <div class="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out rounded-full"></div>
+                        <span class="relative z-10 uppercase tracking-widest text-xs flex items-center gap-2" id="submit-label">
+                            Send Inquiry <iconify-icon icon="lucide:arrow-right" class="group-hover:translate-x-2 transition-transform"></iconify-icon>
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Success State -->
+                <div id="form-success" class="hidden bg-white/5 p-10 rounded-2xl backdrop-blur-sm border border-white/10 text-center">
+                    <div class="text-5xl mb-5 text-gold">✦</div>
+                    <h3 class="text-2xl serif text-gold mb-3">Inquiry Received</h3>
+                    <p class="text-white/60 text-sm leading-relaxed max-w-xs mx-auto">Thank you. Our concierge team will be in touch within 24 hours to begin crafting your bespoke Arabian journey.</p>
                 </div>
-                <div>
-                    <input type="email" placeholder="Email Address" class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 hover-target text-sm">
-                </div>
-                <div>
-                    <input type="text" placeholder="Desired Dates" class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 hover-target text-sm">
-                </div>
-                <div>
-                    <textarea placeholder="Tell us about your dream journey..." rows="4" class="w-full bg-transparent border-b border-white/20 py-3 focus:outline-none focus:border-gold transition-colors text-white placeholder:text-white/30 hover-target resize-none text-sm"></textarea>
-                </div>
-                <button type="button" class="group relative inline-flex items-center justify-center px-8 py-4 border border-gold/50 bg-black/20 backdrop-blur-md hover:bg-gold hover:text-black transition-all duration-500 hover-target overflow-hidden rounded-full mt-4 w-full md:w-auto">
-                    <div class="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out rounded-full"></div>
-                    <span class="relative z-10 uppercase tracking-widest text-xs flex items-center gap-2">
-                        Send Inquiry
-                        <iconify-icon icon="lucide:arrow-right" class="group-hover:translate-x-2 transition-transform"></iconify-icon>
-                    </span>
-                </button>
-            </form>
+            </div>
         </div>
     </section>
 
@@ -167,91 +183,151 @@
     <footer class="pt-24 pb-12 px-6 md:px-20 border-t border-white/10 bg-black">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 mb-20">
             <div class="max-w-sm">
-                <a href="index.html" class="text-4xl serif tracking-widest uppercase block mb-6 hover-target">Khaymah <span class="text-2xl text-gold ml-2">خيمة</span></a>
-                <p class="text-white/60 text-sm leading-relaxed mb-8">
-                    Rooted in tradition, elevated for the modern explorer. Experience the majestic Arabian landscapes with unparalleled luxury.
-                </p>
-                <a href="mailto:concierge@khaymah.com" class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center justify-center gap-3 w-fit hover-target border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
+                <a href="index.html" class="text-4xl serif tracking-widest uppercase block mb-6">Khaymah <span class="text-2xl text-gold ml-2">خيمة</span></a>
+                <p class="text-white/60 text-sm leading-relaxed mb-8">Rooted in tradition, elevated for the modern explorer.</p>
+                <a href="mailto:concierge@khaymah.com" class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center gap-3 w-fit border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
                     <iconify-icon icon="lucide:mail"></iconify-icon> concierge@khaymah.com
                 </a>
             </div>
-            
             <div class="flex flex-col md:flex-row gap-12 md:gap-24 mt-4 md:mt-0">
                 <div class="flex flex-col gap-4">
                     <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">Navigation</h4>
-                    <a href="index.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Home</a>
-                    <a href="about.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">About Us</a>
-                    <a href="#journeys" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Our Journeys</a>
-                    <a href="contact.html" class="text-white/50 hover:text-gold transition-colors text-sm hover-target w-fit">Contact Us</a>
-                </div>
-                <div class="flex flex-col gap-4">
-                    <h4 class="text-white tracking-[0.2em] uppercase text-xs mb-4">Socials</h4>
-                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:instagram"></iconify-icon> Instagram</a>
-                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:twitter"></iconify-icon> Twitter</a>
-                    <a href="#" class="text-white/50 hover:text-gold transition-colors text-sm hover-target flex items-center gap-2 w-fit"><iconify-icon icon="lucide:youtube"></iconify-icon> YouTube</a>
+                    <a href="index.html" class="text-white/50 hover:text-gold transition-colors text-sm w-fit">Home</a>
+                    <a href="about.html" class="text-white/50 hover:text-gold transition-colors text-sm w-fit">About Us</a>
+                    <a href="contact.html" class="text-white/50 hover:text-gold transition-colors text-sm w-fit">Contact Us</a>
                 </div>
             </div>
         </div>
-        
         <div class="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40 tracking-widest uppercase">
             <div>&copy; 2026 Khaymah Luxury Travel. All rights reserved.</div>
-            <div class="flex gap-6">
-                <a href="#" class="hover:text-white transition-colors hover-target">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition-colors hover-target">Terms of Service</a>
-            </div>
         </div>
     </footer>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Page Load Fade In
         gsap.to('#page-body', { opacity: 1, duration: 1.5, ease: "power2.out" });
-
-        // Mobile Menu Toggle
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         let menuOpen = false;
-        if(menuBtn && mobileMenu) {
+        if (menuBtn && mobileMenu) {
             menuBtn.addEventListener('click', () => {
                 menuOpen = !menuOpen;
-                if(menuOpen) {
-                    mobileMenu.classList.remove('translate-x-full');
-                    menuBtn.innerHTML = '<iconify-icon icon="lucide:x"></iconify-icon>';
-                } else {
-                    mobileMenu.classList.add('translate-x-full');
-                    menuBtn.innerHTML = '<iconify-icon icon="lucide:menu"></iconify-icon>';
-                }
+                mobileMenu.classList.toggle('translate-x-full', !menuOpen);
+                menuBtn.innerHTML = menuOpen ? '<iconify-icon icon="lucide:x"></iconify-icon>' : '<iconify-icon icon="lucide:menu"></iconify-icon>';
             });
         }
-
-        // Custom Cursor
         const cursorDot = document.getElementById('cursor-dot');
         const cursorOutline = document.getElementById('cursor-outline');
-        const hoverTargets = document.querySelectorAll('.hover-target, a, button, input, textarea');
-
         window.addEventListener('mousemove', (e) => {
             gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.1 });
             gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power2.out" });
         });
+        gsap.from('.reveal-text', { y: 50, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.5 });
+    </script>
 
-        hoverTargets.forEach(target => {
-            target.addEventListener('mouseenter', () => {
-                cursorOutline.style.width = '60px';
-                cursorOutline.style.height = '60px';
-                cursorOutline.style.backgroundColor = 'rgba(197, 160, 89, 0.1)';
+    <script type="module">
+        import { supabase } from './supabase-client.js';
+
+        const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        let calYear = new Date().getFullYear();
+        let calMonth = new Date().getMonth();
+        let selectedDate = null;
+        let bookedDates = {}; // { 'YYYY-MM-DD': 'blocked'|'open' }
+
+        // ── Load availability ──────────────────────────────────────────────────
+        async function loadAvailability() {
+            const { data } = await supabase.from('booking_dates').select('date,status');
+            if (data) data.forEach(d => bookedDates[d.date] = d.status);
+            renderCal();
+        }
+
+        // ── Render calendar ────────────────────────────────────────────────────
+        function renderCal() {
+            document.getElementById('cal-month-label').textContent = `${MONTHS[calMonth]} ${calYear}`;
+            const firstDay = new Date(calYear, calMonth, 1).getDay();
+            const days = new Date(calYear, calMonth + 1, 0).getDate();
+            const today = new Date(); today.setHours(0,0,0,0);
+            let html = '';
+            for (let i = 0; i < firstDay; i++) html += '<div class="cal-cell empty"></div>';
+            for (let d = 1; d <= days; d++) {
+                const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const dt = new Date(calYear, calMonth, d);
+                const isPast = dt < today;
+                const isToday = dt.toDateString() === today.toDateString();
+                const st = bookedDates[ds];
+                let cls = 'cal-cell';
+                if (isPast) cls += ' past';
+                else if (st === 'blocked') cls += ' blocked';
+                else if (st === 'open') cls += ' open';
+                if (isToday) cls += ' today';
+                if (selectedDate === ds) cls += ' selected';
+                const attr = (!isPast && st !== 'blocked') ? `data-date="${ds}"` : '';
+                html += `<div class="${cls}" ${attr}>${d}</div>`;
+            }
+            const grid = document.getElementById('cal-grid');
+            grid.innerHTML = html;
+            grid.querySelectorAll('[data-date]').forEach(cell => {
+                cell.addEventListener('click', () => {
+                    selectedDate = cell.dataset.date;
+                    document.getElementById('inp-date').value = selectedDate;
+                    const disp = new Date(selectedDate + 'T00:00:00').toLocaleDateString('en', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+                    const txt = document.getElementById('selected-date-text');
+                    txt.textContent = disp;
+                    txt.classList.remove('text-white/30');
+                    txt.classList.add('text-white');
+                    document.getElementById('cal-popup').classList.add('hidden');
+                    renderCal();
+                });
             });
-            target.addEventListener('mouseleave', () => {
-                cursorOutline.style.width = '40px';
-                cursorOutline.style.height = '40px';
-                cursorOutline.style.backgroundColor = 'transparent';
-            });
+        }
+
+        // ── Calendar controls ──────────────────────────────────────────────────
+        document.getElementById('cal-prev').addEventListener('click', () => {
+            calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCal();
+        });
+        document.getElementById('cal-next').addEventListener('click', () => {
+            calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCal();
+        });
+        document.getElementById('date-trigger').addEventListener('click', () => {
+            document.getElementById('cal-popup').classList.toggle('hidden');
+        });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#cal-popup') && !e.target.closest('#date-trigger')) {
+                document.getElementById('cal-popup').classList.add('hidden');
+            }
         });
 
-        // Reveal Animations
-        gsap.from('.reveal-text', {
-            y: 50, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.5
+        // ── Form submit ────────────────────────────────────────────────────────
+        document.getElementById('contact-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const label = document.getElementById('submit-label');
+            const errBox = document.getElementById('form-error');
+            label.innerHTML = '<iconify-icon icon="lucide:loader-2" class="animate-spin"></iconify-icon> Sending...';
+            btn.disabled = true;
+            errBox.classList.add('hidden');
+
+            const { error } = await supabase.from('inquiries').insert([{
+                name:        document.getElementById('inp-name').value.trim(),
+                email:       document.getElementById('inp-email').value.trim(),
+                phone:       document.getElementById('inp-phone').value.trim() || null,
+                journey:     document.getElementById('inp-journey').value || null,
+                guests:      parseInt(document.getElementById('inp-guests').value) || 1,
+                travel_date: document.getElementById('inp-date').value || null,
+                message:     document.getElementById('inp-message').value.trim()
+            }]);
+
+            if (error) {
+                errBox.textContent = 'Something went wrong. Please email concierge@khaymah.com directly.';
+                errBox.classList.remove('hidden');
+                label.innerHTML = 'Send Inquiry <iconify-icon icon="lucide:arrow-right"></iconify-icon>';
+                btn.disabled = false;
+            } else {
+                document.getElementById('contact-form').classList.add('hidden');
+                document.getElementById('form-success').classList.remove('hidden');
+            }
         });
+
+        loadAvailability();
     </script>
 </body>
 </html>
