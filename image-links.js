@@ -13,9 +13,9 @@ window.imageLinks = {
     "journey_3": "asset/40301ed4c72e4eae80b704b36d5d0a79.jpg",
     
     // Values
-    "value_1": "https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?q=80&w=1000&auto=format&fit=crop",
-    "value_2": "https://images.unsplash.com/photo-1528287942171-fbe365d1d9cb?q=80&w=1000&auto=format&fit=crop",
-    "value_3": "https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=1000&auto=format&fit=crop",
+    "value_1": "asset/cd7d742d0ed9f76280d4da97afa68406.jpg",
+    "value_2": "asset/d9e44f65accb5369adcbcadfb068832d.jpg",
+    "value_3": "asset/22febb8e78ececbb188e6d81f386d563.jpg",
     
     // About
     "about_story": "https://i.pinimg.com/736x/5f/6a/03/5f6a03115e89826a2cfea8d13a17e9b4.jpg",

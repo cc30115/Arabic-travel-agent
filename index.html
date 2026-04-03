@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
     <script src="image-links.js"></script>
+    <script type="module" src="supabase-sync.js"></script>
     <style>
         :root {
             --sand: #E8DCC4;
@@ -287,21 +288,21 @@
 
         <div class="relative z-10 text-center px-4 mt-20">
             <div class="overflow-hidden mb-4 pb-2">
-                <p class="text-gold tracking-[0.3em] text-sm md:text-base uppercase hero-text translate-y-full">Beyond
+                <p class="text-gold tracking-[0.3em] text-sm md:text-base uppercase hero-text translate-y-full" data-content="hero_subtitle">Beyond
                     the Dunes</p>
             </div>
             <div class="overflow-hidden pb-4">
-                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight">
+                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight" data-content="hero_title_1">
                     Arabian</h1>
             </div>
             <div class="overflow-hidden mb-8 pb-6">
-                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight">
+                <h1 class="text-5xl md:text-8xl lg:text-9xl serif font-light hero-text translate-y-full leading-tight" data-content="hero_title_2">
                     Elegance <span class="text-3xl md:text-6xl text-gold not-italic">أناقة</span></h1>
             </div>
             <div class="overflow-hidden pt-4">
                 <a href="#journeys"
                     class="inline-flex items-center gap-3 border border-white/30 px-8 py-4 rounded-full hover:bg-white hover:text-black transition-all duration-500 hover-target hero-text translate-y-full">
-                    <span class="uppercase tracking-widest text-xs">Discover the Tent</span>
+                    <span class="uppercase tracking-widest text-xs" data-content="hero_cta_btn">Discover the Tent</span>
                     <iconify-icon icon="lucide:arrow-down-right"></iconify-icon>
                 </a>
             </div>
@@ -316,11 +317,11 @@
     <section id="journeys" class="py-32 px-6 md:px-20 relative border-t border-white/10">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-end mb-20">
-                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight">
+                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight" data-content="journeys_title">
                     Curated Journeys <br>
                     <span class="text-gold italic">رحلاتنا</span>
                 </h2>
-                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed">
+                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed" data-content="journeys_desc">
                     Discover our meticulously crafted itineraries, ranging from week-long escapes to grand three-week
                     odysseys across the Arabian Peninsula.
                 </p>
@@ -340,15 +341,15 @@
                     </a>
                     <div class="w-full md:w-2/5 space-y-6 md:pl-10">
                         <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4">
-                            <span class="w-10 h-px bg-gold"></span> 7 Days
+                            <span class="w-10 h-px bg-gold"></span> <span data-content="journey_1_duration">7 Days</span>
                         </div>
-                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Empty Quarter Escape</h3>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight" data-content="journey_1_title">The Empty Quarter Escape</h3>
                         <div class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70">
                             <span class="border border-white/20 px-3 py-1 rounded-full">Dubai</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">Liwa Oasis</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">Empty Quarter</span>
                         </div>
-                        <p class="text-white/50 text-sm leading-relaxed">Venture into the Rub' al Khali, the largest
+                        <p class="text-white/50 text-sm leading-relaxed" data-content="journey_1_desc">Venture into the Rub' al Khali, the largest
                             continuous sand desert in the world. Experience shifting sands, sleep under unpolluted
                             stars, and discover ancient Bedouin survival secrets.</p>
                         <a href="journey-1.html"
@@ -371,9 +372,9 @@
                     </a>
                     <div class="w-full md:w-2/5 space-y-6 md:pr-10 text-left md:text-right">
                         <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4 md:justify-end">
-                            14 Days <span class="w-10 h-px bg-gold"></span>
+                            <span data-content="journey_2_duration">14 Days</span> <span class="w-10 h-px bg-gold"></span>
                         </div>
-                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Bedouin Heritage Trail</h3>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight" data-content="journey_2_title">The Bedouin Heritage Trail</h3>
                         <div
                             class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70 md:justify-end">
                             <span class="border border-white/20 px-3 py-1 rounded-full">Dubai</span>
@@ -381,7 +382,7 @@
                             <span class="border border-white/20 px-3 py-1 rounded-full">Nizwa</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">Wahiba Sands</span>
                         </div>
-                        <p class="text-white/50 text-sm leading-relaxed">A profound two-week journey tracing ancient
+                        <p class="text-white/50 text-sm leading-relaxed" data-content="journey_2_desc">A profound two-week journey tracing ancient
                             trading routes. Blend the rugged beauty of Omani mountains with pristine UAE dunes,
                             exploring ancient forts and vibrant souks.</p>
                         <a href="journey-2.html"
@@ -404,16 +405,16 @@
                     </a>
                     <div class="w-full md:w-2/5 space-y-6 md:pl-10">
                         <div class="text-gold text-sm tracking-widest uppercase flex items-center gap-4">
-                            <span class="w-10 h-px bg-gold"></span> 21 Days
+                            <span class="w-10 h-px bg-gold"></span> <span data-content="journey_3_duration">21 Days</span>
                         </div>
-                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight">The Grand Arabian Odyssey</h3>
+                        <h3 class="text-4xl md:text-5xl serif text-white leading-tight" data-content="journey_3_title">The Grand Arabian Odyssey</h3>
                         <div class="flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-white/70">
                             <span class="border border-white/20 px-3 py-1 rounded-full">Riyadh</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">AlUla</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">Abu Dhabi</span>
                             <span class="border border-white/20 px-3 py-1 rounded-full">Oman</span>
                         </div>
-                        <p class="text-white/50 text-sm leading-relaxed">The ultimate expression of Arabian luxury.
+                        <p class="text-white/50 text-sm leading-relaxed" data-content="journey_3_desc">The ultimate expression of Arabian luxury.
                             Traverse breathtaking landscapes of Saudi Arabia, UAE, and Oman. From ancient Nabataean
                             tombs to futuristic skylines.</p>
                         <a href="journey-3.html"
@@ -430,11 +431,11 @@
     <section id="heritage" class="py-32 px-6 md:px-20 relative">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-end mb-20">
-                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight">
+                <h2 class="text-4xl md:text-6xl serif max-w-2xl leading-tight" data-content="values_title">
                     Rooted in tradition, <br>
                     <span class="text-gold italic">elevated for the modern explorer.</span>
                 </h2>
-                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed">
+                <p class="text-white/50 max-w-sm mt-8 md:mt-0 text-sm leading-relaxed" data-content="values_desc">
                     Khaymah offers an exclusive gateway to the majestic Arabian landscapes, blending ancient Bedouin
                     hospitality with unparalleled luxury.
                 </p>
@@ -456,8 +457,8 @@
                         <span class="text-gold text-sm">01</span>
                         <div class="h-px bg-white/20 flex-1"></div>
                     </div>
-                    <h3 class="text-2xl serif mb-2">Cultural Immersion</h3>
-                    <p class="text-white/60 text-sm leading-relaxed">Authentic encounters with local artisans,
+                    <h3 class="text-2xl serif mb-2" data-content="value_1_title">Cultural Immersion</h3>
+                    <p class="text-white/60 text-sm leading-relaxed" data-content="value_1_desc">Authentic encounters with local artisans,
                         historians, and the timeless desert way of life.</p>
                 </div>
                 <!-- Value 2 -->
@@ -475,8 +476,8 @@
                         <span class="text-gold text-sm">02</span>
                         <div class="h-px bg-white/20 flex-1"></div>
                     </div>
-                    <h3 class="text-2xl serif mb-2">Refined Comfort</h3>
-                    <p class="text-white/60 text-sm leading-relaxed">Sleep under the stars in lavishly appointed tents
+                    <h3 class="text-2xl serif mb-2" data-content="value_2_title">Refined Comfort</h3>
+                    <p class="text-white/60 text-sm leading-relaxed" data-content="value_2_desc">Sleep under the stars in lavishly appointed tents
                         that rival the world's finest suites.</p>
                 </div>
                 <!-- Value 3 -->
@@ -494,8 +495,8 @@
                         <span class="text-gold text-sm">03</span>
                         <div class="h-px bg-white/20 flex-1"></div>
                     </div>
-                    <h3 class="text-2xl serif mb-2">Absolute Serenity</h3>
-                    <p class="text-white/60 text-sm leading-relaxed">Escape the noise. Find peace in the vast, silent
+                    <h3 class="text-2xl serif mb-2" data-content="value_3_title">Absolute Serenity</h3>
+                    <p class="text-white/60 text-sm leading-relaxed" data-content="value_3_desc">Escape the noise. Find peace in the vast, silent
                         expanse of the golden dunes.</p>
                 </div>
             </div>
@@ -544,12 +545,12 @@
             <div class="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-gold/50 rounded-br-3xl"></div>
 
             <p class="text-gold tracking-[0.3em] text-xs uppercase mb-6 flex items-center justify-center gap-4">
-                <span class="w-8 h-px bg-gold"></span> Royal Concierge <span class="w-8 h-px bg-gold"></span>
+                <span class="w-8 h-px bg-gold"></span> <span data-content="concierge_label">Royal Concierge</span> <span class="w-8 h-px bg-gold"></span>
             </p>
-            <h2 class="text-4xl md:text-7xl serif mb-6 leading-tight">
+            <h2 class="text-4xl md:text-7xl serif mb-6 leading-tight" data-content="concierge_title">
                 Craft Your <span class="italic text-gold">Bespoke</span> Journey
             </h2>
-            <p class="text-white/60 mb-12 max-w-lg mx-auto text-sm leading-relaxed">
+            <p class="text-white/60 mb-12 max-w-lg mx-auto text-sm leading-relaxed" data-content="concierge_desc">
                 Connect directly with our dedicated Royal Concierge. Share your desires, and we will intricately tailor
                 an uncompromised Arabian odyssey exclusively for you.
             </p>
@@ -587,13 +588,13 @@
             <div class="max-w-sm">
                 <a href="index.html" class="text-4xl serif tracking-widest uppercase block mb-6 hover-target">Khaymah
                     <span class="text-2xl text-gold ml-2">خيمة</span></a>
-                <p class="text-white/60 text-sm leading-relaxed mb-8">
+                <p class="text-white/60 text-sm leading-relaxed mb-8" data-content="footer_tagline">
                     Rooted in tradition, elevated for the modern explorer. Experience the majestic Arabian landscapes
                     with unparalleled luxury.
                 </p>
                 <a href="mailto:concierge@khaymah.com"
                     class="text-gold hover:text-white transition-colors tracking-widest text-xs uppercase flex items-center justify-center gap-3 w-fit hover-target border border-white/20 px-6 py-3 rounded-full hover:bg-white/5">
-                    <iconify-icon icon="lucide:mail"></iconify-icon> concierge@khaymah.com
+                    <iconify-icon icon="lucide:mail"></iconify-icon> <span data-content="footer_email">concierge@khaymah.com</span>
                 </a>
             </div>
 

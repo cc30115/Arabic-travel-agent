@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khaymah | Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { --sand: #E8DCC4; --dark: #0A0A0A; --gold: #C5A059; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: var(--sand); }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(197,160,89,0.25); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        .nav-item { transition: all 0.2s; }
+        .nav-item.active {
+            color: var(--gold) !important;
+            background: rgba(197,160,89,0.08);
+            border-right: 2px solid var(--gold);
+        }
+        .content-card { transition: background 0.15s; }
+        .content-card:hover { background: rgba(255,255,255,0.02); }
+        .image-card { transition: all 0.2s; }
+        .image-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+        .badge {
+            font-size: 10px; letter-spacing: 0.08em;
+            text-transform: uppercase; padding: 2px 8px;
+            border-radius: 99px; display: inline-block;
+        }
+        .type-text { background: rgba(74,222,128,0.1); color: #4ade80; }
+        .type-image { background: rgba(96,165,250,0.1); color: #60a5fa; }
+        .lang-all { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+        .lang-en { background: rgba(197,160,89,0.1); color: #C5A059; }
+        .lang-zh { background: rgba(244,114,182,0.1); color: #f472b6; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex selection:bg-[#C5A059] selection:text-white">
+
+    <!-- Auth / Login View -->
+    <div id="auth-view" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0A0A0A] backdrop-blur-sm transition-opacity duration-300">
+        <div class="w-full max-w-sm p-8 border border-white/10 rounded-2xl bg-black/60 shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl serif text-[#C5A059] mb-1">Khaymah <span class="text-xl">خيمة</span></h1>
+                <p class="text-white/40 text-[10px] tracking-[0.25em] uppercase">Admin Portal</p>
+            </div>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-white/40 mb-2">Email</label>
+                    <input type="email" id="email" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-white/40 mb-2">Password</label>
+                    <input type="password" id="password" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors">
+                </div>
+                <div id="login-error" class="text-red-400 text-xs hidden bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg"></div>
+                <button type="submit"
+                    class="w-full bg-[#C5A059] text-black font-medium py-3 rounded-lg uppercase tracking-widest text-xs hover:bg-white transition-colors">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard View (hidden by default) -->
+    <div id="dashboard-view" class="hidden flex w-full h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside class="w-60 border-r border-white/8 flex flex-col bg-black flex-shrink-0" style="border-color: rgba(255,255,255,0.07)">
+            <div class="p-5 border-b border-white/5">
+                <div class="text-lg serif text-[#C5A059]">Khaymah <span class="text-sm">خيمة</span></div>
+                <p class="text-white/30 text-[10px] tracking-widest uppercase mt-0.5">Content Manager</p>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-3">
+                <p class="px-5 text-[9px] tracking-[0.15em] uppercase text-white/20 mb-1 pt-1">Home Page</p>
+
+                <button class="nav-item active w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="all">
+                    <iconify-icon icon="lucide:layout-grid" width="14"></iconify-icon> All Content
+                </button>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="hero">
+                    <iconify-icon icon="lucide:star" width="14"></iconify-icon> Hero Section
+                </button>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="journeys">
+                    <iconify-icon icon="lucide:map" width="14"></iconify-icon> Journeys
+                </button>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="values">
+                    <iconify-icon icon="lucide:heart" width="14"></iconify-icon> Core Values
+                </button>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="concierge">
+                    <iconify-icon icon="lucide:message-square" width="14"></iconify-icon> Concierge CTA
+                </button>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="footer">
+                    <iconify-icon icon="lucide:layout-panel-bottom" width="14"></iconify-icon> Footer
+                </button>
+
+                <p class="px-5 text-[9px] tracking-[0.15em] uppercase text-white/20 mb-1 pt-5">Assets</p>
+                <button class="nav-item w-full text-left px-5 py-2.5 text-xs text-white/50 hover:text-white flex items-center gap-2.5" data-section="images">
+                    <iconify-icon icon="lucide:image" width="14"></iconify-icon> Image Assets
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-white/5 space-y-1">
+                <a href="index.html" target="_blank"
+                    class="w-full flex items-center justify-center gap-2 text-white/30 hover:text-white py-2 text-[10px] uppercase tracking-widest transition-colors rounded-lg hover:bg-white/5">
+                    <iconify-icon icon="lucide:external-link" width="12"></iconify-icon> Preview Site
+                </a>
+                <button id="logout-btn"
+                    class="w-full flex items-center justify-center gap-2 text-white/30 hover:text-red-400 py-2 text-[10px] uppercase tracking-widest transition-colors rounded-lg hover:bg-red-500/5">
+                    <iconify-icon icon="lucide:log-out" width="12"></iconify-icon> Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#0A0A0A]">
+
+            <!-- Top Header Bar -->
+            <header class="h-14 border-b border-white/5 flex items-center px-7 justify-between flex-shrink-0">
+                <div>
+                    <h1 class="text-xs font-medium tracking-[0.15em] uppercase text-white" id="section-title">All Content</h1>
+                    <p class="text-[10px] text-white/30 mt-0.5" id="section-desc">All editable content across the website</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="refresh-btn"
+                        class="text-white/30 hover:text-[#C5A059] transition-colors p-2 rounded-lg hover:bg-white/5" title="Refresh">
+                        <iconify-icon icon="lucide:refresh-cw" width="15"></iconify-icon>
+                    </button>
+                    <button id="add-new-btn"
+                        class="bg-[#C5A059] hover:bg-white text-black transition-colors text-[10px] uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1.5 font-medium">
+                        <iconify-icon icon="lucide:plus" width="13"></iconify-icon> Add Key
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-auto p-7" id="content-area">
+                <!-- Loading -->
+                <div id="loading-state" class="py-20 text-center text-white/30 flex flex-col items-center gap-4">
+                    <iconify-icon icon="lucide:loader-2" class="animate-spin text-3xl text-[#C5A059]"></iconify-icon>
+                    <p class="text-[10px] tracking-widest uppercase">Loading Content...</p>
+                </div>
+                <!-- Dynamic content injected by JS -->
+                <div id="main-content" class="hidden"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit / Add Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-[#111] border border-white/15 rounded-2xl w-full max-w-xl p-7 shadow-2xl transform transition-all scale-95 opacity-0" id="edit-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg serif text-[#C5A059]" id="modal-title">Edit Content</h3>
+                <button id="close-modal-btn" class="text-white/30 hover:text-white transition-colors p-1">
+                    <iconify-icon icon="lucide:x" width="20"></iconify-icon>
+                </button>
+            </div>
+
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-white/30 mb-1.5">Key <span class="text-white/20 normal-case tracking-normal">(identifier)</span></label>
+                        <input type="text" id="edit-key" required
+                            class="w-full bg-black border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-white/30 mb-1.5">Label <span class="text-white/20 normal-case tracking-normal">(description)</span></label>
+                        <input type="text" id="edit-desc" placeholder="e.g. Hero main title"
+                            class="w-full bg-black border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-white/30 mb-1.5">Language</label>
+                        <select id="edit-lang"
+                            class="w-full bg-black border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors">
+                            <option value="en">English (en)</option>
+                            <option value="zh">Chinese (zh)</option>
+                            <option value="all">Global (all)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-white/30 mb-1.5">Type</label>
+                        <select id="edit-type"
+                            class="w-full bg-black border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors">
+                            <option value="text">Text</option>
+                            <option value="image">Image URL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-white/30 mb-1.5" id="value-label">Content</label>
+                    <textarea id="edit-value" required rows="4"
+                        class="w-full bg-black border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059] transition-colors resize-none"
+                        placeholder="Enter text content or paste an image URL..."></textarea>
+                </div>
+
+                <!-- Live Image Preview -->
+                <div id="image-preview-wrap" class="hidden rounded-xl overflow-hidden border border-white/10">
+                    <img id="image-preview" src="" alt="Preview" class="w-full h-44 object-cover">
+                </div>
+
+                <div class="pt-3 flex justify-end gap-3 border-t border-white/5">
+                    <button type="button" id="cancel-modal-btn"
+                        class="px-5 py-2 rounded-lg text-white/50 hover:bg-white/5 transition-colors text-xs uppercase tracking-widest">Cancel</button>
+                    <button type="submit" id="save-modal-btn"
+                        class="px-5 py-2 rounded-lg bg-[#C5A059] text-black font-medium hover:bg-white transition-colors text-xs uppercase tracking-widest flex items-center gap-2">
+                        <iconify-icon icon="lucide:save" id="save-icon"></iconify-icon> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
